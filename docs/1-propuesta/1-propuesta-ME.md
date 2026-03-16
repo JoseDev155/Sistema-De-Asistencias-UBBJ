@@ -39,3 +39,9 @@ Además, React tiene una gran comunidad y una amplia gama de bibliotecas y herra
 
 También se eligió Bootstrap para el diseño y la maquetación, ya que es un framework CSS que proporciona estilos predefinidos y componentes reutilizables, lo que acelera el proceso de diseño y garantiza una apariencia consistente en toda la aplicación.
 Se podría utilizar Tailwind CSS, ya que muchas plataformas de IA orientadas al diseño lo usan, pero se hizo está decisión asumiendo que los miembros del equipo no querían aprender CSS a profundiad.
+
+### Otras herramientas y tecnologías
+
+* **VS Code**: Como editor de código, gratuito
+* **GitHub Copilot (Pro)**: Tengo la versión Pro, por el carnet de estudiante :p
+* **Cartero**: Cliente HTTP como sustituto a **Postman**, ya que es gratuito y de código abierto. Aunque se puede usar Postman si se prefiere, también es gratis pero requiere crear una cuenta
