@@ -5,11 +5,11 @@
 
 * **Base de Datos:** PostgreSQL
 * **Framework:** FastAPI
-* **Versión de Python:** `3.*` con Anaconda
+* **Versión de Python:** `3.13.9` con Anaconda
 
 ## Instrucciones para el Backend
 ### Desarrollo
-#### Para Anaconda
+#### **Para Anaconda**
 
 1. Clonar el repositorio
 
@@ -20,8 +20,11 @@ git clone https://github.com/<usuario>/Sistema-De-Asistencias-UBBJ.git
 2. Crear un entorno virtual con Anaconda
 
 ```bash
-conda create -n asistencias-ubbj python=3.10
+cd backend
+conda create -n asistencias-ubbj python=3
 ```
+
+* `python=3`: Especifica que se va a usar la última versión de **Python 3** disponible en Anaconda
 
 3. Activar el entorno virtual
 
@@ -36,13 +39,14 @@ pip install -r requirements.txt
 ```
 
 5. Configurar la base de datos PostgreSQL y actualizar las variables de entorno en el archivo `.env` con las credenciales correspondientes.
+
 6. Ejecutar el servidor de desarrollo
 
 ```bash
 uvicorn main:app --reload
 ```
 
-#### Para Python
+#### **Para Python**
 
 1. Clonar el repositorio
 
@@ -53,6 +57,7 @@ git clone https://github.com/<usuario>/Sistema-De-Asistencias-UBBJ.git
 2. Crear un entorno virtual
 
 ```bash
+cd backend
 python -m venv asistencias-ubbj
 ```
 
