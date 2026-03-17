@@ -5,7 +5,7 @@
 
 * **Base de Datos:** PostgreSQL
 * **Framework:** FastAPI
-* **Versión de Python:** `3.13.9` con Anaconda
+* **Versión de Python:** `3.14.3` con Anaconda
 
 ## Instrucciones para el Backend
 ### Desarrollo
@@ -45,6 +45,8 @@ pip install -r requirements.txt
 ```bash
 uvicorn main:app --reload
 ```
+
+* `--reload`: Permite que el servidor se reinicie automáticamente cada vez que se realicen cambios en el código
 
 #### **Para Python**
 
