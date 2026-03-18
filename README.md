@@ -1,16 +1,13 @@
-<center>
+<div align="center">
     <h1>Sistema de Asistencias UBBJ</h1>
-</center>
-
-<center>
     <img src="./banner/Banner_UBBJ.png" alt="Logo UBBJ" width="300" height="200">
-</center>
+</div>
 
-<center>
+<div align="center">
     <blockquote>
         <span>Universidades para el Bienestar Benito Juárez García</span>
     </blockquote>
-</center>
+</div>
 <hr>
 
 Registra entradas, calcula puntualidad y retardos, genera reportes y estadísticas para supervisión administrativa.
