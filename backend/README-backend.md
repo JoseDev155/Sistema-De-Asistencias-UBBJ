@@ -9,6 +9,9 @@
 
 ## Instrucciones para el Backend
 ### Desarrollo
+
+>**Renombrar el archivo `base.env` a `.env`.**
+
 #### **Para Anaconda**
 
 1. Clonar el repositorio
