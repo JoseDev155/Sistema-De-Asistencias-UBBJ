@@ -13,4 +13,4 @@ class Role(Base):
     is_active = Column(Boolean, default=True)
     
     # Relacion inversa para SQLAlchemy
-    users = relationship("User", back_populates="role")
+    users = relationship("User", back_populates="roles")
