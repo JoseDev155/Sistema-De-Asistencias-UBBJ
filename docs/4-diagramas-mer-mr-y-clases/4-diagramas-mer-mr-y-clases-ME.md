@@ -22,7 +22,7 @@ Pero al final si salió bien, Gemini únicamente me dio correción de tipos de d
 
 Únicamente use llaves primarias (**PK**s), llaves foráneas (**FK**s) y 1 que 2 atributos, como dije, solo era un bosquejo rápido para tener una idea de cómo se relacionan las entidades, no me preocupé por los otros atributos ni nada:
 
-![Modelo Relacional](./diagrama-mer-mr/bosquejo-ER-workflow-light.png)
+![Bosquejo - Diagrama de BD](./diagrama-mer-mr/bosquejo-ER-workflow-light.png)
 
 >Se hizo en **Excalidraw**
 
@@ -31,6 +31,8 @@ Pero al final si salió bien, Gemini únicamente me dio correción de tipos de d
 ![Modelo Relacional](./diagrama-mer-mr/Modelo%20Relacional%20MR%20-%20UBBJ.png)
 
 ### Modelo Entidad-Relación (MER)
+
+![Modelo ER](./diagrama-mer-mr/Diagrama%20MER%20-%20UBBJ.png)
 
 >Ambos diagramas se hicieron en **Lucidchart**
 
