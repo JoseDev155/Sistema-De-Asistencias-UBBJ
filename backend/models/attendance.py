@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, DateTime, Enum, ForeignKey
+from sqlalchemy import Column, Integer, DateTime, Enum, String, ForeignKey
 from sqlalchemy.orm import relationship
 from config.connection import Base
 
@@ -12,6 +12,7 @@ class Attendance(Base):
     status = Column(
         Enum("present", "absent", "late", "justified", "left_early"),
         nullable=False)
+    notes = Column(String(255), nullable=True)
     enrollment_id = Column(Integer, ForeignKey("enrollments.id"), nullable=False)
     
     # Relacion con el modelo de rol para SQLAlchemy
