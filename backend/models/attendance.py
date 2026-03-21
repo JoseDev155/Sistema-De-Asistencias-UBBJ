@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, DateTime, Enum, String, ForeignKey
 from sqlalchemy.orm import relationship
 from database.connection import Base
 
-# Modelo de usuario para la base de datos
+# Modelo de asistencia para la base de datos
 class Attendance(Base):
     # Nombre de la tabla en la base de datos
     __tablename__ = "attendances"
