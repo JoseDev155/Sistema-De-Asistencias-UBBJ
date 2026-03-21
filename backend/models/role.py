@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, Boolean, String
 from sqlalchemy.orm import relationship
 from database.connection import Base
 
-# Modelo de usuario para la base de datos
+# Modelo de rol de usuarios para la base de datos
 class Role(Base):
     # Nombre de la tabla en la base de datos
     __tablename__ = "roles"

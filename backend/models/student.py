@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Date, Boolean
 from sqlalchemy.orm import relationship
 from database.connection import Base
 
-# Modelo de usuario para la base de datos
+# Modelo de estudiante para la base de datos
 class Student(Base):
     # Nombre de la tabla en la base de datos
     __tablename__ = "students"
