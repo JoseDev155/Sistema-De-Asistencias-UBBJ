@@ -14,6 +14,8 @@ class Group(Base):
     academic_cycle_id = Column(Integer, ForeignKey("academic_cycles.id")) # El ciclo academico
     
     # Relaciones
+    schedules = relationship("Schedule", back_populates="group")
+    enrollments = relationship("Enrollment", back_populates="group")
     career_signature = relationship("CareerSignature", back_populates="groups")
     user = relationship("User", back_populates="groups")
     academic_cycle = relationship("AcademicCycle", back_populates="groups")

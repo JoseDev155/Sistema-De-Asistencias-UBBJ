@@ -15,9 +15,8 @@ class User(Base):
     is_active = Column(Boolean, nullable=False, default=True)
     role_id = Column(Integer, ForeignKey("roles.id"), nullable=False)
     
-    # Opcional, pero:
     # Relacion con el modelo de rol para SQLAlchemy
     role = relationship("Role", back_populates="users")
     
-    # Recomendado para relaciones inversas entre tablas
-    #user = relationship("User", back_populates="roles")
+    # Relacion con grupos (el profesor a cargo)
+    groups = relationship("Group", back_populates="user")
