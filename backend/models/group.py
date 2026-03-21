@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
-from config.connection import Base
+from database.connection import Base
 
 # Modelo de grupo para la base de datos
 class Group(Base):
