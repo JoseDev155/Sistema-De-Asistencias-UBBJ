@@ -13,4 +13,4 @@ class Career(Base):
     is_active = Column(Boolean, default=True)
     
     # Relacion inversa para SQLAlchemy
-    career_signatures = relationship("CareerSignature", back_populates="careers")
+    career_signatures = relationship("CareerSignature", back_populates="career")

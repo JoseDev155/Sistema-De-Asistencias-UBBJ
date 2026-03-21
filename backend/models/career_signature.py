@@ -12,4 +12,6 @@ class CareerSignature(Base):
     career_id = Column(String(15), ForeignKey("careers.id"))
     
     # Relacion inversa para SQLAlchemy
-    group = relationship("Group", back_populates="career_signatures")
+    signature = relationship("Signature", back_populates="career_signatures")
+    career = relationship("Career", back_populates="career_signatures")
+    groups = relationship("Group", back_populates="career_signature")

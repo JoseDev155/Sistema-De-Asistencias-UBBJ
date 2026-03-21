@@ -13,5 +13,6 @@ class Enrollment(Base):
     group_id = Column(String(15), ForeignKey("groups.id"), nullable=False)
     
     # Relacion inversa para SQLAlchemy
-    student = relationship("Enrollment", back_populates="students")
-    group = relationship("Enrollment", back_populates="groups")
+    student = relationship("Student", back_populates="enrollments")
+    group = relationship("Group", back_populates="enrollments")
+    attendances = relationship("Attendance", back_populates="enrollment")

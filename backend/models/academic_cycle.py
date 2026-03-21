@@ -11,5 +11,5 @@ class AcademicCycle(Base):
     cycle_name = Column(String(100), nullable=False)
     cycle_year = Column(Date, nullable=False)
     
-    # Relacion con el modelo de rol para SQLAlchemy
-    group = relationship("Group", back_populates="academic_cycles")
+    # Relacion con el modelo de grupo para SQLAlchemy
+    groups = relationship("Group", back_populates="academic_cycle")

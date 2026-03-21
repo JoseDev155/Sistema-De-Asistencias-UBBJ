@@ -15,4 +15,4 @@ class Student(Base):
     is_active = Column(Boolean, default=True)
     
     # Relacion inversa para SQLAlchemy
-    enrollment = relationship("Enrollment", back_populates="students")
+    enrollments = relationship("Enrollment", back_populates="student")
