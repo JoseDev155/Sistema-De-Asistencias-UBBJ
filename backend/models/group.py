@@ -10,7 +10,7 @@ class Group(Base):
     id = Column(String(15), primary_key=True)
     name = Column(String(15), nullable=False) # Ej: "A", "B" o "101"
     user_id = Column(String(15), ForeignKey("users.id")) # El profesor a cargo del grupo
-    career_signature_id = Column(String(20), ForeignKey("career_signatures.id")) # La materia
+    career_signature_id = Column(String(15), ForeignKey("career_signatures.id")) # La materia
     academic_cycle_id = Column(Integer, ForeignKey("academic_cycles.id")) # El ciclo academico
     
     # Relaciones

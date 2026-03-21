@@ -81,7 +81,7 @@ CREATE TABLE groups (
     id VARCHAR(15) PRIMARY KEY,
     name VARCHAR(15) NOT NULL,
     user_id VARCHAR(15) REFERENCES users(id) NOT NULL, -- El profesor a cargo del grupo
-    career_signature_id VARCHAR(20) REFERENCES career_signatures(id) NOT NULL,
+    career_signature_id VARCHAR(15) REFERENCES career_signatures(id) NOT NULL,
     academic_cycle_id INTEGER REFERENCES academic_cycles(id) NOT NULL
 );
 
