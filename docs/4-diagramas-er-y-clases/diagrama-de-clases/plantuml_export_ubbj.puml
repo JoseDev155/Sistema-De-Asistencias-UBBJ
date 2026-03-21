@@ -1,0 +1,113 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+package "User Management" {
+    class Role {
+        - id: Integer
+        - name: String
+        - description: String
+        - is_active: Boolean
+        + getPermissions(): List
+    }
+
+    class User {
+        - id: String
+        - first_name: String
+        - last_name: String
+        - email: String
+        - password: Hash
+        - is_active: Boolean
+        + authenticate(password: String): Boolean
+        + getFullName(): String
+    }
+}
+
+package "Academic Structure" {
+    class Signature {
+        - id: String
+        - name: String
+        - description: String
+        - is_active: Boolean
+    }
+
+    class Career {
+        - id: Integer
+        - name: String
+        - description: String
+        - is_active: Boolean
+    }
+
+    class SignatureCareer {
+        - id: String
+        ' Relación N:N entre Carrera y Materia
+    }
+
+    class AcademicCycle {
+        - id: Integer
+        - cycle_name: String
+        - cycle_year: Date
+    }
+
+    class Group {
+        - id: String
+        - name: String
+        + getScheduleForDay(day: Integer): Schedule
+        + getAttendanceReport(): DataFrame
+    }
+}
+
+package "Attendance Engine" {
+    class Schedule {
+        - id: String
+        - day_of_week: SmallInt
+        - start_time: Time
+        - end_time: Time
+        - max_entry_minutes: Integer
+        - minutes_to_be_late: Integer
+        + isValidTime(check_time: Time): Boolean
+    }
+
+    class Student {
+        - id: String
+        - first_name: String
+        - last_name: String
+        - email: String
+        - enrollment_date: Date
+        - is_active: Boolean
+        + getGlobalAttendance(): Float
+    }
+
+    class Enrollment {
+        - id: Integer
+        - enrollment_date: Date
+        + getStudentAttendanceInGroup(): Float
+    }
+
+    class Attendance {
+        - id: Integer
+        - attendance_date: Date
+        - status: Enum
+        - notes: String
+        + calculateStatus(arrivalTime: DateTime, schedule: Schedule): Enum
+    }
+}
+
+' Relaciones de Asociación
+Role "1" -- "0..*" User : assigned_to >
+Signature "1" -- "0..*" SignatureCareer
+Career "1" -- "0..*" SignatureCareer
+
+SignatureCareer "1" -- "0..*" Group : belongs_to >
+User "1" -- "0..*" Group : teaches >
+AcademicCycle "1" -- "0..*" Group : active_in >
+
+Group "1" *-- "1..*" Schedule : contains >
+Group "1" -- "0..*" Enrollment : has >
+Student "1" -- "0..*" Enrollment : owns >
+
+Enrollment "1" *-- "0..*" Attendance : records >
+
+@enduml
