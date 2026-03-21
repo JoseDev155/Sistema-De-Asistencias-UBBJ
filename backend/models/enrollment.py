@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Date, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from config.connection import Base
+from database.connection import Base
 
 # Modelo de incsripciones para la base de datos
 class Enrollment(Base):

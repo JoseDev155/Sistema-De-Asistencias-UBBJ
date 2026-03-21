@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Boolean
 from sqlalchemy.orm import relationship
-from config.connection import Base
+from database.connection import Base
 
 # Modelo de materia para la base de datos
 class Signature(Base):

@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, Boolean, String
 from sqlalchemy.orm import relationship
-from config.connection import Base
+from database.connection import Base
 
 # Modelo de usuario para la base de datos
 class Role(Base):

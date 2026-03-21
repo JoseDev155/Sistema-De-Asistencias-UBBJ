@@ -1,6 +1,6 @@
 from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.orm import relationship
-from config.connection import Base
+from database.connection import Base
 
 # Modelo de carrera-asignatura para la base de datos
 class CareerSignature(Base):
