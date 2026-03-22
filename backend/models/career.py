@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy import Integer, String, Boolean
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from database.connection import Base
 
 # Modelo de carrera para la base de datos
@@ -7,10 +7,10 @@ class Career(Base):
     # Nombre de la tabla en la base de datos
     __tablename__ = "careers"
     
-    id = Column(Integer, primary_key=True)
-    name = Column(String(100), nullable=False)
-    description = Column(String(255), nullable=True)
-    is_active = Column(Boolean, default=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    description: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     
     # Relacion inversa para SQLAlchemy
     career_signatures = relationship("CareerSignature", back_populates="career")

@@ -1,5 +1,5 @@
-from sqlalchemy import Column, String, Integer, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import String, Integer, ForeignKey
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from database.connection import Base
 
 # Modelo de grupo para la base de datos
@@ -7,11 +7,11 @@ class Group(Base):
     # Nombre de la tabla en la base de datos
     __tablename__ = "groups"
     
-    id = Column(String(15), primary_key=True)
-    name = Column(String(15), nullable=False) # Ej: "A", "B" o "101"
-    user_id = Column(String(15), ForeignKey("users.id")) # El profesor a cargo del grupo
-    career_signature_id = Column(String(15), ForeignKey("career_signatures.id")) # La materia
-    academic_cycle_id = Column(Integer, ForeignKey("academic_cycles.id")) # El ciclo academico
+    id: Mapped[str] = mapped_column(String(15), primary_key=True)
+    name: Mapped[str] = mapped_column(String(15), nullable=False) # Ej: "A", "B" o "101"
+    user_id: Mapped[str] = mapped_column(String(15), ForeignKey("users.id")) # El profesor a cargo del grupo
+    career_signature_id: Mapped[str] = mapped_column(String(15), ForeignKey("career_signatures.id")) # La materia
+    academic_cycle_id: Mapped[int] = mapped_column(Integer, ForeignKey("academic_cycles.id")) # El ciclo academico
     
     # Relaciones
     schedules = relationship("Schedule", back_populates="group")
