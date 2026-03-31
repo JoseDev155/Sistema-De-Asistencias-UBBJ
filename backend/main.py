@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from routers import (
     academic_cycle_controller, \
     attendance_controller, \
-#    auth_controller, \
+    auth_controller, \
     career_controller, \
     career_signature_controller, \
     enrollment_controller, \
@@ -22,7 +22,7 @@ app = FastAPI()
 # Agregar los controladores a la API
 app.include_router(academic_cycle_controller)
 app.include_router(attendance_controller)
-#app.include_router(auth_controller)
+app.include_router(auth_controller)
 app.include_router(career_controller)
 app.include_router(career_signature_controller)
 app.include_router(enrollment_controller)

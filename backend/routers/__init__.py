@@ -5,7 +5,7 @@ from .academic_cycle_controller import academic_cycle_controller
 from .attendance_controller import attendance_controller
 
 # Auth Router
-#from .auth_controller import auth_controller
+from .auth_controller import auth_controller
 
 # Career Router
 from .career_controller import career_controller
@@ -37,7 +37,7 @@ from .user_controller import user_controller
 __all__ = [
     "academic_cycle_controller",
     "attendance_controller",
-#    "auth_controller",
+    "auth_controller",
     "career_controller",
     "career_signature_controller",
     "enrollment_controller",
