@@ -111,8 +111,12 @@ from .user_service import (
     get_all_service as get_all_users,
     search_by_id_service as search_user_by_id,
     search_by_id_or_email_service as search_users_by_id_or_email,
+    search_by_name_service as search_user_by_name,
     create_user_service,
     update_user_service,
+    delete_user_service,
+    reactivate_user_service,
+    destroy_user_service,
 )
 
 __all__ = [
@@ -195,6 +199,10 @@ __all__ = [
     "get_all_users",
     "search_user_by_id",
     "search_users_by_id_or_email",
+    "search_user_by_name",
     "create_user_service",
     "update_user_service",
+    "delete_user_service",
+    "reactivate_user_service",
+    "destroy_user_service",
 ]

@@ -113,6 +113,7 @@ from .user_repository import (
     update as user_update,
     reactivate as user_reactivate,
     destroy as user_destroy,
+    deactivate as user_deactivate,
 )
 
 __all__ = [
@@ -200,4 +201,5 @@ __all__ = [
     "user_update",
     "user_reactivate",
     "user_destroy",
+    "user_deactivate",
 ]
