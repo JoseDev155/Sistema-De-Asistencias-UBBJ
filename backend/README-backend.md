@@ -30,7 +30,7 @@ backend/
 ├───services/       # Servicios, para la lógica de negocio
 ├───sockets/        # WebSockets para comunicación en tiempo real (si se implementa)
 ├───uploads/        # Archivos subidos por los usuarios, como Excels de asistencias
-└───utils/          # Funciones de utilidad, como seguridad, autenticación, etc.
+├───utils/          # Funciones de utilidad, como seguridad, autenticación, etc.
 └───main.py         # Punto de entrada de la aplicación (Ruta principal)
 ```
 
