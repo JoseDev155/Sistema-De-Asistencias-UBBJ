@@ -1,5 +1,54 @@
 # Backend - Sistema de Asistencias UBBJ
-## Descripción del Backend
+# Índice
+- [Backend - Sistema de Asistencias UBBJ](#backend---sistema-de-asistencias-ubbj)
+- [Índice](#índice)
+  - [Arquitectura del Backend](#arquitectura-del-backend)
+  - [Tecnologías del Backend](#tecnologías-del-backend)
+  - [Instrucciones para el Backend](#instrucciones-para-el-backend)
+    - [Desarrollo](#desarrollo)
+      - [**Para Anaconda**](#para-anaconda)
+      - [**Para Python**](#para-python)
+  - [Librerías de Python para el análisis de datos](#librerías-de-python-para-el-análisis-de-datos)
+
+## Arquitectura del Backend
+
+Es un **MVC (Modelo-Vista-Controlador) extendido**:
+
+```plaintext
+backend/
+├───database/       # Configuración de la base de datos y conexión
+│   └───scripts/
+│       └───test/
+├───exports/        # Archivos exportados, como reportes o datos de asistencias
+├───logs/           # Archivos de logs para monitoreo y depuración
+├───metrics/        # Métricas de asistencias, puntualidad, etc.
+├───models/         # Modelos (M)
+├───reports/        # Reportes generados a partir de los datos de asistencias
+├───repositories/   # Repositorios para acceso a datos
+├───routers/        # Controladores, rutas o endpoints de la API (V, C)
+├───schemas/        # Esquemas para validación y serialización de datos
+├───services/       # Servicios, para la lógica de negocio
+├───sockets/        # WebSockets para comunicación en tiempo real (si se implementa)
+├───uploads/        # Archivos subidos por los usuarios, como Excels de asistencias
+└───utils/          # Funciones de utilidad, como seguridad, autenticación, etc.
+└───main.py         # Punto de entrada de la aplicación (Ruta principal)
+```
+
+EL MVC tradicional se compone de:
+
+* **Modelos:** Representan las entidades de la base de datos (tablas) y se definen usando **SQLAlchemy**.
+* **Vistas:** En FastAPI, las vistas se implementan como rutas o endpoints que manejan las solicitudes HTTP y devuelven respuestas.
+* **Controladores:** Las rutas de la API.
+
+Extensión del MVC:
+
+* **Repositorios:** Encapsulan la lógica de acceso a datos, osea, las operaciones CRUD (Crear, Leer, Actualizar, Eliminar) que se pueden hacer en la Base de Datos.
+* **Servicios:** Lógica de negocio. Aquí se ejecutan los métodos de los repositorios y se aplican algunas validaciones.
+* **Esquemas (Schemas):** Definen la estructura de los datos que se reciben y se envían a través de la API, usando **Pydantic** para validación y serialización.
+* **Utilidades:** Funciones que se pueden usar para inyectar dependencias en las rutas, como la conexión a la base de datos, la seguridad o la autenticación de usuarios. Están en la carpeta `utils/`.
+* **Otros módulos**
+
+## Tecnologías del Backend
 
 >Se usó **Anaconda** como entorno de desarrollo para gestionar las dependencias y facilitar la instalación de paquetes necesarios para el desarrollo del backend. Pero también se puede usar un entorno virtual tradicional con `venv` o `virtualenv` si se prefiere, siempre y cuando la versión de Python que se use sea compatible o sea la misma que la utilizada en el proyecto.
 
