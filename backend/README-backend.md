@@ -41,7 +41,10 @@ conda activate asistencias-ubbj
 
 ```bash
 pip install -r requirements.txt
+pip install -r requirements-conda.txt
 ```
+* `requirements.txt`: Contiene las dependencias principales del proyecto
+* `requirements-conda.txt`: Contiene las dependencias exactas usadas con la versión específica de Python usadas con Anaconda
 
 5. Configurar la base de datos PostgreSQL y actualizar las variables de entorno en el archivo `.env` con las credenciales correspondientes.
 
