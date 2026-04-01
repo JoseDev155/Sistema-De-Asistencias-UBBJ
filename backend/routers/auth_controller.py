@@ -17,13 +17,13 @@ from schemas import (
     TokenResponse, UserResponse
 )
 
-# Instancia del router de autenticación
+# Instancia del router de autenticacion
 auth_controller = APIRouter(prefix="/auth", tags=["Autenticación"])
 
 
 # RUTAS DE AUTENTICACION
 @auth_controller.post("/login", response_model=TokenResponse, status_code=status.HTTP_200_OK)
-@limiter.limit(RATE_LIMIT_LOGIN)  # type: ignore  # Límite desde .env
+@limiter.limit(RATE_LIMIT_LOGIN)  # type: ignore  # LLimite desde .env
 async def login(
     login_data: LoginRequest,
     db: Session = Depends(get_db)
@@ -41,7 +41,7 @@ async def login(
 
 
 @auth_controller.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-@limiter.limit(RATE_LIMIT_REGISTER)  # type: ignore  # Límite desde .env
+@limiter.limit(RATE_LIMIT_REGISTER)  # type: ignore  # Limite desde .env
 async def register(
     register_data: RegisterRequest,
     db: Session = Depends(get_db)
@@ -50,26 +50,26 @@ async def register(
     **Registro de nuevo usuario**
     
     Crea un nuevo usuario en el sistema.
-    Las contraseñas deben ser iguales y mínimo 8 caracteres.
+    Las contraseñas deben ser iguales y minimo 8 caracteres.
     
-    - **id**: ID único del usuario (máximo 15 caracteres)
+    - **id**: ID unico del usuario (maximo 15 caracteres)
     - **first_name**: Nombre del usuario
     - **last_name**: Apellido del usuario
-    - **email**: Email único
-    - **password**: Contraseña (mínimo 8 caracteres)
-    - **password_confirm**: Confirmación de contraseña
+    - **email**: Email unico
+    - **password**: Contraseña (minimo 8 caracteres)
+    - **password_confirm**: Confirmacion de contraseña
     - **role_id**: ID del rol (1=Admin, 2=Profesor, 3=Estudiante)
     """
     return register_auth_service(db, register_data)
 
 
 @auth_controller.post("/refresh", response_model=TokenResponse, status_code=status.HTTP_200_OK)
-@limiter.limit(RATE_LIMIT_REFRESH)  # type: ignore  # Límite desde .env
+@limiter.limit(RATE_LIMIT_REFRESH)  # type: ignore  # Limite desde .env
 async def refresh_access_token(refresh_data: RefreshTokenRequest):
     """
     **Renovar access token**
     
-    Genera un nuevo access_token usando un refresh_token válido.
+    Genera un nuevo access_token usando un refresh_token valido.
     El refresh_token debe estar vigente.
     """
     return refresh_token_auth_service(refresh_data.refresh_token)
@@ -96,10 +96,10 @@ async def change_password(
     **Cambiar contraseña**
     
     Permite al usuario cambiar su contraseña.
-    Requiere la contraseña actual para validación.
+    Requiere la contraseña actual para validacion.
     
     - **current_password**: Contraseña actual
-    - **new_password**: Nueva contraseña (mínimo 8 caracteres)
-    - **password_confirm**: Confirmación de nueva contraseña
+    - **new_password**: Nueva contraseña (minimo 8 caracteres)
+    - **password_confirm**: Confirmacion de nueva contraseña
     """
     return change_password_auth_service(db, current_user, change_pwd_data)

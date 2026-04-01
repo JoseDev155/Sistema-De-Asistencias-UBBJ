@@ -200,4 +200,10 @@ pyrightconfig.json
 .history
 .ionide
 
+### Agregado manualmente para el proyecto ###
+# Ignorar logs, pero mantener el archivo .gitkeep para que el directorio se mantenga en el repositorio
+logs/*
+!logs/.gitkeep
+### Fin ###
+
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
