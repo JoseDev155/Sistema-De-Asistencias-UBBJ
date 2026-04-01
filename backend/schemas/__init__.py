@@ -1,3 +1,12 @@
+# Schemas para Auth
+from .auth_schema import (
+    LoginRequest,
+    RegisterRequest,
+    RefreshTokenRequest,
+    ChangePasswordRequest,
+    TokenResponse,
+)
+
 # Schemas para User
 from .user_schema import UserBase, UserCreate, UserUpdate, UserResponse
 
@@ -52,6 +61,12 @@ from .group_schema import GroupBase, GroupCreate, GroupUpdate, GroupResponse
 from .schedule_schema import ScheduleBase, ScheduleCreate, ScheduleUpdate, ScheduleResponse
 
 __all__ = [
+    # Auth
+    "LoginRequest",
+    "RegisterRequest",
+    "RefreshTokenRequest",
+    "ChangePasswordRequest",
+    "TokenResponse",
     # User
     "UserBase",
     "UserCreate",

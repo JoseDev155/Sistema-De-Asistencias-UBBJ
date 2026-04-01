@@ -20,6 +20,10 @@ from .attendance_service import (
 # Auth Service
 from .auth_service import (
     login_auth_service,
+    register_auth_service,
+    refresh_token_auth_service,
+    change_password_auth_service,
+    get_current_user_info_service
 )
 
 # Career Service
@@ -135,6 +139,10 @@ __all__ = [
     "destroy_attendance_service",
     # Auth
     "login_auth_service",
+    "register_auth_service",
+    "refresh_token_auth_service",
+    "change_password_auth_service",
+    "get_current_user_info_service",
     # Career
     "get_all_careers",
     "search_career_by_id",
