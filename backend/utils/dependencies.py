@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 import jwt
 # Importar directorios del proyecto
-from security import decode_token
+from .security import decode_token
 from database import get_db
 from models import User
 from repositories import user_repository

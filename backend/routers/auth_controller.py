@@ -1,5 +1,5 @@
 # Librerias
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Request
 from sqlalchemy.orm import Session
 # Importar directorios del proyecto
 from database import get_db
@@ -23,8 +23,9 @@ auth_controller = APIRouter(prefix="/auth", tags=["Autenticación"])
 
 # RUTAS DE AUTENTICACION
 @auth_controller.post("/login", response_model=TokenResponse, status_code=status.HTTP_200_OK)
-@limiter.limit(RATE_LIMIT_LOGIN)  # type: ignore  # LLimite desde .env
+@limiter.limit(RATE_LIMIT_LOGIN)  # type: ignore  # Límite desde .env
 async def login(
+    request: Request,
     login_data: LoginRequest,
     db: Session = Depends(get_db)
 ):
@@ -42,8 +43,7 @@ async def login(
 
 @auth_controller.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 @limiter.limit(RATE_LIMIT_REGISTER)  # type: ignore  # Limite desde .env
-async def register(
-    register_data: RegisterRequest,
+async def register(    request: Request,    register_data: RegisterRequest,
     db: Session = Depends(get_db)
 ):
     """
@@ -65,7 +65,10 @@ async def register(
 
 @auth_controller.post("/refresh", response_model=TokenResponse, status_code=status.HTTP_200_OK)
 @limiter.limit(RATE_LIMIT_REFRESH)  # type: ignore  # Limite desde .env
-async def refresh_access_token(refresh_data: RefreshTokenRequest):
+async def refresh_access_token(
+    request: Request,
+    refresh_data: RefreshTokenRequest
+):
     """
     **Renovar access token**
     
