@@ -63,11 +63,36 @@ def get_current_admin_user(current_user: User = Depends(get_current_user)) -> Us
     # Dependencia para verificar que el usuario actual es administrador
     # Se usa cuando se necesitan permisos elevados
     
-    # Asumiendo que hay un role_id para admin (ajusta según tu lógica)
-    if current_user.role_id != 1:  # Cambiar según tu configuración de roles
+    if current_user.role_id != 1:  # role_id = 1 es Admin
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Acceso denegado. Se requieren permisos de administrador"
+        )
+    
+    return current_user
+
+
+def get_current_professor_user(current_user: User = Depends(get_current_user)) -> User:
+    # Dependencia para verificar que el usuario actual es profesor
+    # Se usa para las operaciones permitidas para profesores
+    
+    if current_user.role_id != 2:  # role_id = 2 es Profesor
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Acceso denegado. Se requieren permisos de profesor"
+        )
+    
+    return current_user
+
+
+def get_current_professor_or_admin_user(current_user: User = Depends(get_current_user)) -> User:
+    # Dependencia para verificar que el usuario es profesor O administrador
+    # Se usa cuando tanto admin como profesores pueden acceder
+    
+    if current_user.role_id not in [1, 2]:  # role_id = 1 es Admin, 2 es Profesor
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Acceso denegado. Se requieren permisos de administrador o profesor"
         )
     
     return current_user
