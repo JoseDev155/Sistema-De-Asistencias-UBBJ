@@ -19,6 +19,9 @@ from .enrollment_controller import enrollment_controller
 # Group Router
 from .group_controller import group_controller
 
+# Health Router
+from .health_controller import health_controller
+
 # Role Router
 from .role_controller import role_controller
 
@@ -42,6 +45,7 @@ __all__ = [
     "career_signature_controller",
     "enrollment_controller",
     "group_controller",
+    "health_controller",
     "role_controller",
     "schedule_controller",
     "signature_controller",
