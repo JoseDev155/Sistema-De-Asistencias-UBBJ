@@ -3,62 +3,86 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 # Importar directorios del proyecto
 from services import (
-    create_student_service, \
-    destroy_student_service, \
-    get_all_students as get_all_service, \
-    search_students_by_email as search_by_email_service, \
-    search_student_by_id as search_by_id_service, \
-    search_students_by_name as search_by_name_service, \
-    update_student_service)
+    create_student_service,
+    destroy_student_service,
+    get_all_students as get_all_service,
+    search_students_by_email as search_by_email_service,
+    search_student_by_id as search_by_id_service,
+    search_students_by_name as search_by_name_service,
+    update_student_service
+)
 from schemas import StudentCreate, StudentResponse, StudentUpdate
 from database import get_db
+from models import User
+from utils import get_current_professor_or_admin_user, get_current_admin_user
 
 
 # Instancia del router de estudiantes
 student_controller = APIRouter()
 
 
-# RUTAS DE ESTUDIANTES
+# RUTAS DE ESTUDIANTES - Admin y Profesor
 @student_controller.get("/students", tags=["students"],
-                       description="Endpoint para obtener todos los estudiantes del sistema",
+                       description="Endpoint para obtener todos los estudiantes del sistema. Admin y Profesor.",
                        response_model=list[StudentResponse])
-async def get_students(db: Session = Depends(get_db)) -> dict[str, object]:
+async def get_students(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_professor_or_admin_user)
+) -> dict[str, object]:
     students_list = get_all_service(db)
     return {"message": "Lista de estudiantes", "students": students_list}
 
+
 @student_controller.get("/students/{id}", tags=["students"],
-                       description="Endpoint para obtener un estudiante específico por su ID",
+                       description="Endpoint para obtener un estudiante específico por su ID. Admin y Profesor.",
                        response_model=StudentResponse)
-async def get_student(id: str, db: Session = Depends(get_db)) -> dict[str, object]:
+async def get_student(
+    id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_professor_or_admin_user)
+) -> dict[str, object]:
     student = search_by_id_service(db, id)
     if not student:
         return {"message": "Estudiante no encontrado"}
     return {"message": "Estudiante encontrado", "student": student}
 
+
 @student_controller.get("/students/search/name/{name}", tags=["students"],
-                       description="Endpoint para obtener un estudiante específico por su nombre",
+                       description="Endpoint para obtener un estudiante específico por su nombre. Admin y Profesor.",
                        response_model=StudentResponse)
-async def get_student_by_name(name: str, db: Session = Depends(get_db)) -> dict[str, object]:
+async def get_student_by_name(
+    name: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_professor_or_admin_user)
+) -> dict[str, object]:
     student = search_by_name_service(db, name)
     if not student:
         return {"message": "Estudiante no encontrado"}
     return {"message": "Estudiante encontrado", "student": student}
 
+
 @student_controller.get("/students/search/email/{email}", tags=["students"],
-                       description="Endpoint para obtener un estudiante específico por su email",
+                       description="Endpoint para obtener un estudiante específico por su email. Admin y Profesor.",
                        response_model=StudentResponse)
-async def get_student_by_email(email: str, db: Session = Depends(get_db)) -> dict[str, object]:
+async def get_student_by_email(
+    email: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_professor_or_admin_user)
+) -> dict[str, object]:
     student = search_by_email_service(db, email)
     if not student:
         return {"message": "Estudiante no encontrado"}
     return {"message": "Estudiante encontrado", "student": student}
 
+
 @student_controller.post("/students", tags=["students"],
-                        description="Endpoint para crear un nuevo estudiante en el sistema",
+                        description="Endpoint para crear un nuevo estudiante en el sistema. Admin y Profesor.",
                         response_model=StudentResponse)
 async def create_student(
-    student: StudentCreate, db: Session = Depends(get_db)
-    ) -> dict[str, StudentResponse] | dict[str, object]:
+    student: StudentCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_professor_or_admin_user)
+) -> dict[str, StudentResponse] | dict[str, object]:
     try:
         created_student = create_student_service(student, db)
         if not created_student:
@@ -69,12 +93,16 @@ async def create_student(
     except Exception as e:
         return {"message": "Error al crear el estudiante", "error": str(e)}
 
+
 @student_controller.put("/students/{id}", tags=["students"],
-                       description="Endpoint para actualizar un estudiante específico por su ID",
+                       description="Endpoint para actualizar un estudiante específico por su ID. Solo Admin.",
                        response_model=StudentResponse)
 async def update_student(
-    id: str, student: StudentUpdate, db: Session = Depends(get_db)
-    ) -> dict[str, StudentResponse] | dict[str, object]:
+    id: str,
+    student: StudentUpdate,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user)
+) -> dict[str, StudentResponse] | dict[str, object]:
     try:
         updated_student = update_student_service(id, student, db)
         if not updated_student:
@@ -85,9 +113,14 @@ async def update_student(
     except Exception as e:
         return {"message": "Error al actualizar el estudiante", "error": str(e)}
 
+
 @student_controller.delete("/students/{id}", tags=["students"],
-                          description="Endpoint para eliminar un estudiante específico por su ID")
-async def delete_student(id: str, db: Session = Depends(get_db)) -> dict[str, object]:
+                          description="Endpoint para eliminar un estudiante específico por su ID. Solo Admin.")
+async def delete_student(
+    id: str,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user)
+) -> dict[str, object]:
     success = destroy_student_service(id, db)
     if success:
         return {"message": "Estudiante eliminado exitosamente"}
