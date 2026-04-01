@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 # Importar directorios del proyecto
 from database import get_db
 from models import User
-from utils import get_current_user
+from utils import get_current_user, limiter, RATE_LIMIT_LOGIN, RATE_LIMIT_REGISTER, RATE_LIMIT_REFRESH
 from services import (
     login_auth_service,
     register_auth_service,
@@ -23,6 +23,7 @@ auth_controller = APIRouter(prefix="/auth", tags=["Autenticación"])
 
 # RUTAS DE AUTENTICACION
 @auth_controller.post("/login", response_model=TokenResponse, status_code=status.HTTP_200_OK)
+@limiter.limit(RATE_LIMIT_LOGIN)  # type: ignore  # Límite desde .env
 async def login(
     login_data: LoginRequest,
     db: Session = Depends(get_db)
@@ -40,6 +41,7 @@ async def login(
 
 
 @auth_controller.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@limiter.limit(RATE_LIMIT_REGISTER)  # type: ignore  # Límite desde .env
 async def register(
     register_data: RegisterRequest,
     db: Session = Depends(get_db)
@@ -62,6 +64,7 @@ async def register(
 
 
 @auth_controller.post("/refresh", response_model=TokenResponse, status_code=status.HTTP_200_OK)
+@limiter.limit(RATE_LIMIT_REFRESH)  # type: ignore  # Límite desde .env
 async def refresh_access_token(refresh_data: RefreshTokenRequest):
     """
     **Renovar access token**

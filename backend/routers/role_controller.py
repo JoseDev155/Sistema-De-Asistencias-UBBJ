@@ -1,5 +1,5 @@
 # Librerias
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 # Importar directorios del proyecto
 from services import (
@@ -24,127 +24,139 @@ role_controller = APIRouter()
 # RUTAS DE ROLES - SOLO ADMIN
 @role_controller.get("/roles", tags=["roles"],
                      description="Endpoint para obtener todos los roles del sistema. Solo Admin.",
-                     response_model=list[RoleResponse])
+                     response_model=list[RoleResponse],
+                     status_code=status.HTTP_200_OK)
 async def get_roles(
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, object]:
+) -> list[RoleResponse]:
     roles_list = get_all_service(db)
-    return {"message": "Lista de roles", "roles": roles_list}
+    return roles_list
 
 
 @role_controller.get("/roles/{id}", tags=["roles"],
                      description="Endpoint para obtener un rol específico por su ID. Solo Admin.",
-                     response_model=RoleResponse)
+                     response_model=RoleResponse,
+                     status_code=status.HTTP_200_OK)
 async def get_role(
     id: int,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, object]:
+) -> RoleResponse:
     role = search_by_id_service(db, id)
     if not role:
-        return {"message": "Rol no encontrado"}
-    return {"message": "Rol encontrado", "role": role}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rol no encontrado")
+    return role
 
 
 @role_controller.get("/roles/search/{name}", tags=["roles"],
                      description="Endpoint para obtener un rol específico por su nombre. Solo Admin.",
-                     response_model=RoleResponse)
+                     response_model=RoleResponse,
+                     status_code=status.HTTP_200_OK)
 async def get_role_by_name(
     name: str,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, object]:
+) -> RoleResponse:
     role = search_by_name_service(db, name)
     if not role:
-        return {"message": "Rol no encontrado"}
-    return {"message": "Rol encontrado", "role": role}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rol no encontrado")
+    return role
 
 
 @role_controller.post("/roles", tags=["roles"],
                       description="Endpoint para crear un nuevo rol en el sistema. Solo Admin.",
-                      response_model=RoleResponse)
+                      response_model=RoleResponse,
+                      status_code=status.HTTP_201_CREATED)
 async def create_role(
     role: RoleCreate,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, RoleResponse] | dict[str, object]:
+) -> RoleResponse:
     try:
         created_role = create_role_service(role, db)
         if not created_role:
-            return {"message": "Error al crear el rol", "role": None}
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error al crear el rol")
         
         role_response = RoleResponse.model_validate(created_role)
-        return {"message": "Rol creado", "role": role_response}
+        return role_response
+    except HTTPException:
+        raise
     except Exception as e:
-        return {"message": "Error al crear el rol", "error": str(e)}
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @role_controller.put("/roles/{id}", tags=["roles"],
                      description="Endpoint para actualizar un rol específico por su ID. Solo Admin.",
-                     response_model=RoleResponse)
+                     response_model=RoleResponse,
+                     status_code=status.HTTP_200_OK)
 async def update_role(
     id: int,
     role: RoleUpdate,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, RoleResponse] | dict[str, object]:
+) -> RoleResponse:
     try:
         updated_role = update_role_service(id, role, db)
         if not updated_role:
-            return {"message": "Rol no encontrado o no pudo ser actualizado", "role": None}
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rol no encontrado")
         
         role_response = RoleResponse.model_validate(updated_role)
-        return {"message": "Rol actualizado", "role": role_response}
+        return role_response
+    except HTTPException:
+        raise
     except Exception as e:
-        return {"message": "Error al actualizar el rol", "error": str(e)}
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @role_controller.delete("/roles/{id}", tags=["roles"],
-                        description="Endpoint para eliminar (soft delete) un rol específico por su ID. Solo Admin.")
+                        description="Endpoint para eliminar (soft delete) un rol específico por su ID. Solo Admin.",
+                        status_code=status.HTTP_204_NO_CONTENT)
 async def delete_role(
     id: int,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, object]:
+) -> None:
     success = delete_role_service(id, db)
-    if success:
-        return {"message": "Rol eliminado exitosamente"}
-    else:
-        return {"message": "Rol no encontrado o no pudo ser eliminado"}
+    if not success:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rol no encontrado")
 
 
 @role_controller.post("/roles/{id}/reactivate", tags=["roles"],
                       description="Endpoint para reactivar un rol específico por su ID. Solo Admin.",
-                      response_model=RoleResponse)
+                      response_model=RoleResponse,
+                      status_code=status.HTTP_200_OK)
 async def reactivate_role(
     id: int,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, object]:
+) -> RoleResponse:
     try:
         role = reactivate_role_service(id, db)
         if not role:
-            return {"message": "Rol no encontrado o no pudo ser reactivado", "role": None}
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rol no encontrado o no pudo ser reactivado")
         
         role_response = RoleResponse.model_validate(role)
-        return {"message": "Rol reactivado", "role": role_response}
+        return role_response
+    except HTTPException:
+        raise
     except Exception as e:
-        return {"message": "Error al reactivar el rol", "error": str(e)}
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @role_controller.delete("/roles/{id}/destroy", tags=["roles"],
-                        description="Endpoint para eliminar definitivamente un rol específico por su ID. Solo Admin.")
+                        description="Endpoint para eliminar definitivamente un rol específico por su ID. Solo Admin.",
+                        status_code=status.HTTP_204_NO_CONTENT)
 async def destroy_role(
     id: int,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, object]:
+) -> None:
     try:
         success = destroy_role_service(id, db)
-        if success:
-            return {"message": "Rol eliminado definitivamente"}
-        else:
-            return {"message": "Rol no encontrado o no pudo ser eliminado definitivamente"}
+        if not success:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rol no encontrado o no pudo ser eliminado definitivamente")
+    except HTTPException:
+        raise
     except Exception as e:
-        return {"message": "Error al eliminar definitivamente el rol", "error": str(e)}
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

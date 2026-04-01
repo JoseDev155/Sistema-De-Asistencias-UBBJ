@@ -1,5 +1,5 @@
 # Librerias
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 # Importar directorios del proyecto
 from services import (
@@ -22,77 +22,84 @@ attendance_controller = APIRouter()
 # RUTAS DE ASISTENCIAS - Admin y Profesor  
 @attendance_controller.get("/attendances", tags=["attendances"],
                           description="Endpoint para obtener todas las asistencias del sistema. Admin y Profesor.",
-                          response_model=list[AttendanceResponse])
+                          response_model=list[AttendanceResponse],
+                          status_code=status.HTTP_200_OK)
 async def get_attendances(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_professor_or_admin_user)
-) -> dict[str, object]:
+) -> list[AttendanceResponse]:
     attendances_list = get_all_service(db)
-    return {"message": "Lista de asistencias", "attendances": attendances_list}
+    return attendances_list
 
 
 @attendance_controller.get("/attendances/{id}", tags=["attendances"],
                           description="Endpoint para obtener una asistencia específica por su ID. Admin y Profesor.",
-                          response_model=AttendanceResponse)
+                          response_model=AttendanceResponse,
+                          status_code=status.HTTP_200_OK)
 async def get_attendance(
     id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_professor_or_admin_user)
-) -> dict[str, object]:
+) -> AttendanceResponse:
     attendance = search_by_id_service(db, id)
     if not attendance:
-        return {"message": "Asistencia no encontrada"}
-    return {"message": "Asistencia encontrada", "attendance": attendance}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asistencia no encontrada")
+    return attendance
 
 
 @attendance_controller.post("/attendances", tags=["attendances"],
                            description="Endpoint para crear una nueva asistencia en el sistema. Admin y Profesor.",
-                           response_model=AttendanceResponse)
+                           response_model=AttendanceResponse,
+                           status_code=status.HTTP_201_CREATED)
 async def create_attendance(
     attendance: AttendanceCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_professor_or_admin_user)
-) -> dict[str, AttendanceResponse] | dict[str, object]:
+) -> AttendanceResponse:
     try:
         created_attendance = create_attendance_service(attendance, db)
         if not created_attendance:
-            return {"message": "Error al crear la asistencia", "attendance": None}
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error al crear la asistencia")
         
         attendance_response = AttendanceResponse.model_validate(created_attendance)
-        return {"message": "Asistencia creada", "attendance": attendance_response}
+        return attendance_response
+    except HTTPException:
+        raise
     except Exception as e:
-        return {"message": "Error al crear la asistencia", "error": str(e)}
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @attendance_controller.put("/attendances/{id}", tags=["attendances"],
                           description="Endpoint para actualizar una asistencia específica por su ID. Solo Admin.",
-                          response_model=AttendanceResponse)
+                          response_model=AttendanceResponse,
+                          status_code=status.HTTP_200_OK)
 async def update_attendance(
     id: int,
     attendance: AttendanceUpdate,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, AttendanceResponse] | dict[str, object]:
+) -> AttendanceResponse:
     try:
         updated_attendance = update_attendance_service(id, attendance, db)
         if not updated_attendance:
-            return {"message": "Asistencia no encontrada o no pudo ser actualizada", "attendance": None}
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asistencia no encontrada")
         
         attendance_response = AttendanceResponse.model_validate(updated_attendance)
-        return {"message": "Asistencia actualizada", "attendance": attendance_response}
+        return attendance_response
+    except HTTPException:
+        raise
     except Exception as e:
-        return {"message": "Error al actualizar la asistencia", "error": str(e)}
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @attendance_controller.delete("/attendances/{id}", tags=["attendances"],
-                             description="Endpoint para eliminar una asistencia específica por su ID. Solo Admin.")
+                             description="Endpoint para eliminar una asistencia específica por su ID. Solo Admin.",
+                             status_code=status.HTTP_204_NO_CONTENT)
 async def delete_attendance(
     id: int,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, object]:
+) -> None:
     success = destroy_attendance_service(id, db)
-    if success:
-        return {"message": "Asistencia eliminada exitosamente"}
-    else:
-        return {"message": "Asistencia no encontrada o no pudo ser eliminada"}
+    if not success:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asistencia no encontrada")

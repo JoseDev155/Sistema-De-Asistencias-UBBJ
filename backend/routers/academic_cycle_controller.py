@@ -1,5 +1,5 @@
 # Librerias
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 # Importar directorios del proyecto
 from services import (
@@ -23,86 +23,94 @@ academic_cycle_controller = APIRouter()
 # RUTAS DE CICLOS ACADÉMICOS - SOLO ADMIN
 @academic_cycle_controller.get("/academic-cycles", tags=["academic-cycles"],
                                description="Endpoint para obtener todos los ciclos académicos del sistema. Admin y Profesor.",
-                               response_model=list[AcademicCycleResponse])
+                               response_model=list[AcademicCycleResponse],
+                               status_code=status.HTTP_200_OK)
 async def get_academic_cycles(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_professor_or_admin_user)
-) -> dict[str, object]:
+) -> list[AcademicCycleResponse]:
     cycles_list = get_all_service(db)
-    return {"message": "Lista de ciclos académicos", "cycles": cycles_list}
+    return cycles_list
 
 @academic_cycle_controller.get("/academic-cycles/{id}", tags=["academic-cycles"],
                                description="Endpoint para obtener un ciclo académico específico por su ID. Admin y Profesor.",
-                               response_model=AcademicCycleResponse)
+                               response_model=AcademicCycleResponse,
+                               status_code=status.HTTP_200_OK)
 async def get_academic_cycle(
     id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_professor_or_admin_user)
-) -> dict[str, object]:
+) -> AcademicCycleResponse:
     cycle = search_by_id_service(db, id)
     if not cycle:
-        return {"message": "Ciclo académico no encontrado"}
-    return {"message": "Ciclo académico encontrado", "cycle": cycle}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ciclo académico no encontrado")
+    return cycle
 
 @academic_cycle_controller.get("/academic-cycles/search/{name}", tags=["academic-cycles"],
                                description="Endpoint para obtener un ciclo académico específico por su nombre. Admin y Profesor.",
-                               response_model=AcademicCycleResponse)
+                               response_model=AcademicCycleResponse,
+                               status_code=status.HTTP_200_OK)
 async def get_academic_cycle_by_name(
     name: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_professor_or_admin_user)
-) -> dict[str, object]:
+) -> AcademicCycleResponse:
     cycle = search_by_name_service(db, name)
     if not cycle:
-        return {"message": "Ciclo académico no encontrado"}
-    return {"message": "Ciclo académico encontrado", "cycle": cycle}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ciclo académico no encontrado")
+    return cycle
 
 @academic_cycle_controller.post("/academic-cycles", tags=["academic-cycles"],
                                 description="Endpoint para crear un nuevo ciclo académico en el sistema. Solo Admin.",
-                                response_model=AcademicCycleResponse)
+                                response_model=AcademicCycleResponse,
+                                status_code=status.HTTP_201_CREATED)
 async def create_academic_cycle(
     cycle: AcademicCycleCreate,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, AcademicCycleResponse] | dict[str, object]:
+) -> AcademicCycleResponse:
     try:
         created_cycle = create_academic_cycle_service(cycle, db)
         if not created_cycle:
-            return {"message": "Error al crear el ciclo académico", "cycle": None}
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error al crear el ciclo académico")
         
         cycle_response = AcademicCycleResponse.model_validate(created_cycle)
-        return {"message": "Ciclo académico creado", "cycle": cycle_response}
+        return cycle_response
+    except HTTPException:
+        raise
     except Exception as e:
-        return {"message": "Error al crear el ciclo académico", "error": str(e)}
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @academic_cycle_controller.put("/academic-cycles/{id}", tags=["academic-cycles"],
                                description="Endpoint para actualizar un ciclo académico específico por su ID. Solo Admin.",
-                               response_model=AcademicCycleResponse)
+                               response_model=AcademicCycleResponse,
+                               status_code=status.HTTP_200_OK)
 async def update_academic_cycle(
     id: int,
     cycle: AcademicCycleUpdate,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, AcademicCycleResponse] | dict[str, object]:
+) -> AcademicCycleResponse:
     try:
         updated_cycle = update_academic_cycle_service(id, cycle, db)
         if not updated_cycle:
-            return {"message": "Ciclo académico no encontrado o no pudo ser actualizado", "cycle": None}
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ciclo académico no encontrado")
         
         cycle_response = AcademicCycleResponse.model_validate(updated_cycle)
-        return {"message": "Ciclo académico actualizado", "cycle": cycle_response}
+        return cycle_response
+    except HTTPException:
+        raise
     except Exception as e:
-        return {"message": "Error al actualizar el ciclo académico", "error": str(e)}
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @academic_cycle_controller.delete("/academic-cycles/{id}", tags=["academic-cycles"],
-                                  description="Endpoint para eliminar un ciclo académico específico por su ID. Solo Admin.")
+                                  description="Endpoint para eliminar un ciclo académico específico por su ID. Solo Admin.",
+                                  status_code=status.HTTP_204_NO_CONTENT)
 async def delete_academic_cycle(
     id: int,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, object]:
+) -> None:
     success = destroy_academic_cycle_service(id, db)
-    if success:
-        return {"message": "Ciclo académico eliminado exitosamente"}
-    else:
-        return {"message": "Ciclo académico no encontrado o no pudo ser eliminado"}
+    if not success:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ciclo académico no encontrado")

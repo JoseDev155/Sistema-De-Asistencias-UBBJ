@@ -1,5 +1,5 @@
 # Librerias
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 # Importar directorios del proyecto
 from services import (
@@ -25,126 +25,132 @@ career_controller = APIRouter()
 # RUTAS DE CARRERAS - SOLO ADMIN
 @career_controller.get("/careers", tags=["careers"],
                      description="Endpoint para obtener todas las carreras del sistema. Admin y Profesor.",
-                     response_model=list[CareerResponse])
+                     response_model=list[CareerResponse],
+                     status_code=status.HTTP_200_OK)
 async def get_careers(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_professor_or_admin_user)
-) -> dict[str, object]:
+) -> list[CareerResponse]:
     careers_list = get_all_service(db)
-    return {"message": "Lista de carreras", "careers": careers_list}
+    return careers_list
 
 @career_controller.get("/careers/{id}", tags=["careers"],
                      description="Endpoint para obtener una carrera específica por su ID. Admin y Profesor.",
-                     response_model=CareerResponse)
+                     response_model=CareerResponse,
+                     status_code=status.HTTP_200_OK)
 async def get_career(
     id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_professor_or_admin_user)
-) -> dict[str, object]:
+) -> CareerResponse:
     career = search_by_id_service(db, id)
-    # Si no encuentra la carrera, devolver un mensaje de error
     if not career:
-        return {"message": "Carrera no encontrada"}
-    return {"message": "Carrera encontrada", "career": career}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Carrera no encontrada")
+    return career
 
 @career_controller.get("/careers/{name}", tags=["careers"],
                      description="Endpoint para obtener una carrera específica por su nombre. Admin y Profesor.",
-                     response_model=CareerResponse)
+                     response_model=CareerResponse,
+                     status_code=status.HTTP_200_OK)
 async def get_career_by_name(
     name: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_professor_or_admin_user)
-) -> dict[str, object]:
+) -> CareerResponse:
     career = search_by_name_service(db, name)
-    # Si no encuentra la carrera, devolver un mensaje de error
     if not career:
-        return {"message": "Carrera no encontrada"}
-    return {"message": "Carrera encontrada", "career": career}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Carrera no encontrada")
+    return career
 
 @career_controller.post("/careers", tags=["careers"],
                       description="Endpoint para crear una nueva carrera en el sistema. Solo Admin.",
-                      response_model=CareerResponse)
+                      response_model=CareerResponse,
+                      status_code=status.HTTP_201_CREATED)
 async def create_career(
     career: CareerCreate,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, CareerResponse] | dict[str, object]:
-    # Bloque de validacion
+) -> CareerResponse:
     try:
         created_career = create_career_service(career, db)
         if not created_career:
-            return {"message": "Error al crear la carrera", "career": None}
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error al crear la carrera")
         
         career_response = CareerResponse.model_validate(created_career)
-        return {"message": "Carrera creada", "career": career_response}
+        return career_response
+    except HTTPException:
+        raise
     except Exception as e:
-        return {"message": "Error al crear la carrera", "error": str(e)}
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @career_controller.put("/careers/{id}", tags=["careers"],
                      description="Endpoint para actualizar una carrera específico por su ID. Solo Admin.",
-                     response_model=CareerResponse)
+                     response_model=CareerResponse,
+                     status_code=status.HTTP_200_OK)
 async def update_career(
     id: int,
     career: CareerUpdate,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, CareerResponse] | dict[str, object]:
-    # Bloque de validacion
+) -> CareerResponse:
     try:
         updated_career = update_career_service(id, career, db)
         if not updated_career:
-            return {"message": "Carrera no encontrada o no pudo ser actualizada", "career": None}
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Carrera no encontrada")
         
         career_response = CareerResponse.model_validate(updated_career)
-        return {"message": "Carrera actualizada", "career": career_response}
+        return career_response
+    except HTTPException:
+        raise
     except Exception as e:
-        return {"message": "Error al actualizar la carrera", "error": str(e)}
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @career_controller.delete("/careers/{id}", tags=["careers"],
-                        description="Endpoint para eliminar una carrera específica por su ID. Solo Admin.")
+                        description="Endpoint para eliminar una carrera específica por su ID. Solo Admin.",
+                        status_code=status.HTTP_204_NO_CONTENT)
 async def delete_career(
     id: int,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, object]:
-    # Borrado logico, no definitivo
+) -> None:
     success = delete_career_service(id, db)
-    if success:
-        return {"message": "Carrera eliminada exitosamente"}
-    else:
-        return {"message": "Carrera no encontrada o no pudo ser eliminada"}
+    if not success:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Carrera no encontrada")
 
 @career_controller.post("/careers/{id}/reactivate", tags=["careers"],
                         description="Endpoint para reactivar una carrera específica por su ID. Solo Admin.",
-                        response_model=CareerResponse)
+                        response_model=CareerResponse,
+                        status_code=status.HTTP_200_OK)
 async def reactivate_career(
     id: int,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, object]:
+) -> CareerResponse:
     try:
         career = reactivate_career_service(id, db)
         if not career:
-            return {"message": "Carrera no encontrada o no pudo ser reactivada", "career": None}
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Carrera no encontrada o no pudo ser reactivada")
         
         career_response = CareerResponse.model_validate(career)
-        return {"message": "Carrera reactivada", "career": career_response}
+        return career_response
+    except HTTPException:
+        raise
     except Exception as e:
-        return {"message": "Error al reactivar la carrera", "error": str(e)}
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @career_controller.delete("/careers/{id}/destroy", tags=["careers"],
-                        description="Endpoint para eliminar definitivamente una carrera específica por su ID. Solo Admin.")
+                        description="Endpoint para eliminar definitivamente una carrera específica por su ID. Solo Admin.",
+                        status_code=status.HTTP_204_NO_CONTENT)
 async def destroy_career(
     id: int,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, object]:
+) -> None:
     try:
-        # Borrado definitivo
         success = destroy_career_service(id, db)
-        if success:
-            return {"message": "Carrera eliminada definitivamente"}
-        else:
-            return {"message": "Carrera no encontrada o no pudo ser eliminada definitivamente"}
+        if not success:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Carrera no encontrada o no pudo ser eliminada definitivamente")
+    except HTTPException:
+        raise
     except Exception as e:
-        return {"message": "Error al eliminar definitivamente la carrera", "error": str(e)}
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

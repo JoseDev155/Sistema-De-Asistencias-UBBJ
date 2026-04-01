@@ -1,5 +1,5 @@
 # Librerias
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 # Importar directorios del proyecto
 from services import (
@@ -23,86 +23,94 @@ group_controller = APIRouter()
 # RUTAS DE GRUPOS - SOLO ADMIN
 @group_controller.get("/groups", tags=["groups"],
                      description="Endpoint para obtener todos los grupos del sistema. Admin y Profesor.",
-                     response_model=list[GroupResponse])
+                     response_model=list[GroupResponse],
+                     status_code=status.HTTP_200_OK)
 async def get_groups(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_professor_or_admin_user)
-) -> dict[str, object]:
+) -> list[GroupResponse]:
     groups_list = get_all_service(db)
-    return {"message": "Lista de grupos", "groups": groups_list}
+    return groups_list
 
 @group_controller.get("/groups/{id}", tags=["groups"],
                      description="Endpoint para obtener un grupo específico por su ID. Admin y Profesor.",
-                     response_model=GroupResponse)
+                     response_model=GroupResponse,
+                     status_code=status.HTTP_200_OK)
 async def get_group(
     id: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_professor_or_admin_user)
-) -> dict[str, object]:
+) -> GroupResponse:
     group = search_by_id_service(db, id)
     if not group:
-        return {"message": "Grupo no encontrado"}
-    return {"message": "Grupo encontrado", "group": group}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Grupo no encontrado")
+    return group
 
 @group_controller.get("/groups/search/{name}", tags=["groups"],
                      description="Endpoint para obtener un grupo específico por su nombre. Admin y Profesor.",
-                     response_model=GroupResponse)
+                     response_model=GroupResponse,
+                     status_code=status.HTTP_200_OK)
 async def get_group_by_name(
     name: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_professor_or_admin_user)
-) -> dict[str, object]:
+) -> GroupResponse:
     group = search_by_name_service(db, name)
     if not group:
-        return {"message": "Grupo no encontrado"}
-    return {"message": "Grupo encontrado", "group": group}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Grupo no encontrado")
+    return group
 
 @group_controller.post("/groups", tags=["groups"],
                       description="Endpoint para crear un nuevo grupo en el sistema. Solo Admin.",
-                      response_model=GroupResponse)
+                      response_model=GroupResponse,
+                      status_code=status.HTTP_201_CREATED)
 async def create_group(
     group: GroupCreate,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, GroupResponse] | dict[str, object]:
+) -> GroupResponse:
     try:
         created_group = create_group_service(group, db)
         if not created_group:
-            return {"message": "Error al crear el grupo", "group": None}
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error al crear el grupo")
         
         group_response = GroupResponse.model_validate(created_group)
-        return {"message": "Grupo creado", "group": group_response}
+        return group_response
+    except HTTPException:
+        raise
     except Exception as e:
-        return {"message": "Error al crear el grupo", "error": str(e)}
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @group_controller.put("/groups/{id}", tags=["groups"],
                      description="Endpoint para actualizar un grupo específico por su ID. Solo Admin.",
-                     response_model=GroupResponse)
+                     response_model=GroupResponse,
+                     status_code=status.HTTP_200_OK)
 async def update_group(
     id: str,
     group: GroupUpdate,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, GroupResponse] | dict[str, object]:
+) -> GroupResponse:
     try:
         updated_group = update_group_service(id, group, db)
         if not updated_group:
-            return {"message": "Grupo no encontrado o no pudo ser actualizado", "group": None}
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Grupo no encontrado")
         
         group_response = GroupResponse.model_validate(updated_group)
-        return {"message": "Grupo actualizado", "group": group_response}
+        return group_response
+    except HTTPException:
+        raise
     except Exception as e:
-        return {"message": "Error al actualizar el grupo", "error": str(e)}
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @group_controller.delete("/groups/{id}", tags=["groups"],
-                        description="Endpoint para eliminar un grupo específico por su ID. Solo Admin.")
+                        description="Endpoint para eliminar un grupo específico por su ID. Solo Admin.",
+                        status_code=status.HTTP_204_NO_CONTENT)
 async def delete_group(
     id: str,
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
-) -> dict[str, object]:
+) -> None:
     success = destroy_group_service(id, db)
-    if success:
-        return {"message": "Grupo eliminado exitosamente"}
-    else:
-        return {"message": "Grupo no encontrado o no pudo ser eliminado"}
+    if not success:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Grupo no encontrado")
