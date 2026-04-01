@@ -8,6 +8,7 @@ from .dependencies import (
 )
 from .functions import get_password_hash, verify_password
 from .security import create_access_token, create_refresh_token, decode_token
+from .rate_limiter import limiter, RATE_LIMIT_LOGIN, RATE_LIMIT_REGISTER, RATE_LIMIT_REFRESH
 
 __all__ = [
     # Dependencias
@@ -23,4 +24,9 @@ __all__ = [
     "create_access_token",
     "create_refresh_token",
     "decode_token",
+    # Rate Limiter
+    "limiter",
+    "RATE_LIMIT_LOGIN",
+    "RATE_LIMIT_REGISTER",
+    "RATE_LIMIT_REFRESH",
 ]

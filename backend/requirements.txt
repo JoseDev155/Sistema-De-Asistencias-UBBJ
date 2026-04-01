@@ -6,3 +6,4 @@ SQLAlchemy
 pwdlib[bcrypt]
 pydantic[email]
 PyJWT
+slowapi
