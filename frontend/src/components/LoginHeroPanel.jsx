@@ -12,7 +12,7 @@ export default function LoginHeroPanel() {
           <img src={mexicoLogo} alt="UBBJ" className="login-hero-logo" />
           <div>
             <p className="login-hero-kicker mb-1">Sistema institucional</p>
-            <h1 className="login-hero-title mb-0">Universidad del Bienestar Benito Juárez García</h1>
+            <h1 className="login-hero-title mb-0">Universidad para el Bienestar Benito Juárez García</h1>
           </div>
         </div>
 

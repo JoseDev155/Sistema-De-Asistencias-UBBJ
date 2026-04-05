@@ -59,7 +59,7 @@ export default function LoginPage() {
 
             <div className="login-brand-chip mb-4">
               <span className="material-symbols-outlined">account_balance</span>
-              <span>Universidades para el Bienestar Benito Juárez García</span>
+              <span>Sistema de Asistencias - UBBJ</span>
             </div>
 
             <h2 className="login-title headline fw-bold mb-2">Iniciar sesión</h2>
