@@ -60,3 +60,8 @@ Registra entradas, calcula puntualidad y retardos, genera reportes y estadístic
 * [Documentación del proyecto](./docs/descripcion-docs.md)
 * [Indicaciones para el Backend](./backend/README-backend.md)
 * [Indicaciones para el Frontend](./frontend/README-frontend.md)
+* [.node-version](./.node-version)*
+* [.npmrc](./.npmrc)*
+
+**NOTA:** El archivo `.node-version` se incluye para facilitar la configuración del entorno de desarrollo de **FNM**, haciendo un `fnm use` automáticamente.<br />
+El archivo `.npmrc` se incluye para configurar el gestor de paquetes **pnpm**, con reglas de seguridad básicas.
