@@ -1,6 +1,6 @@
 # Librerias
 from sqlalchemy.orm import Session
-from datetime import datetime, date
+from datetime import date, time
 # Importar directorios del proyecto
 from models import Attendance
 
@@ -11,19 +11,20 @@ def get_all(db: Session):
 def search_by_id(db: Session, id: int):
     return db.query(Attendance).filter(Attendance.id == id).first()
 
-def search_by_arrival(db: Session, arrival_time: datetime):
+def search_by_arrival(db: Session, arrival_time: time):
     return db.query(Attendance).filter(Attendance.arrival_time == arrival_time).first()
 
-def search_by_id_status(db: Session, status: str):
-    if not status:
-        return None
-    return db.query(Attendance).filter(Attendance.status.in_(status)).first()
+def search_by_enrollment_and_date(db: Session, enrollment_id: int, attendance_date: date):
+    return db.query(Attendance).filter(
+        Attendance.enrollment_id == enrollment_id,
+        Attendance.attendance_date == attendance_date
+    ).first()
 
-def create(db: Session, arrival_time: datetime, status: str, notes: str | None, enrollment_id: int):
+def create(db: Session, attendance_date: date, arrival_time: time | None, notes: str | None, enrollment_id: int):
     # Crear una nueva instancia del modelo Attendance con los datos proporcionados
     attendance = Attendance(
+        attendance_date=attendance_date,
         arrival_time=arrival_time,
-        status=status,
         notes=notes,
         enrollment_id=enrollment_id
     )
@@ -35,7 +36,7 @@ def create(db: Session, arrival_time: datetime, status: str, notes: str | None, 
     
     return attendance
 
-def update(db: Session, id: int, arrival_time: date | None = None, status: str | None = None, 
+def update(db: Session, id: int, attendance_date: date | None = None, arrival_time: time | None = None, status: str | None = None, 
                 notes: str | None = None, enrollment_id: int | None = None):
     # Buscar la asistencia por id
     attendance = search_by_id(db, id)
@@ -44,10 +45,10 @@ def update(db: Session, id: int, arrival_time: date | None = None, status: str |
         return None
     
     # Actualizar solo los campos que fueron proporcionados
+    if attendance_date is not None:
+        attendance.attendance_date = attendance_date
     if arrival_time is not None:
         attendance.arrival_time = arrival_time
-    if status is not None:
-        attendance.status = status
     if notes is not None:
         attendance.notes = notes
     if enrollment_id is not None:

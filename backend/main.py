@@ -3,13 +3,15 @@
 # Librerias
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from slowapi.errors import RateLimitExceeded
 from dotenv import load_dotenv
+from typing import Awaitable, Callable
 import os
+import time
 # Importar directorios del proyecto
-from utils import limiter
-from routers import (
+from utils import limiter, logger
+from routes import (
     academic_cycle_controller, \
     attendance_controller, \
     auth_controller, \
@@ -22,7 +24,11 @@ from routers import (
     schedule_controller, \
     signature_controller, \
     student_controller, \
-    user_controller)
+    user_controller, \
+    exports_controller, \
+    metrics_controller, \
+    reports_controller, \
+    uploads_controller)
 
 
 # Crear una instancia de FastAPI
@@ -56,6 +62,32 @@ def rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded) -> JSO
 app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)  # type: ignore
 
 
+# CONFIGURAR LOGGING MIDDLEWARE
+@app.middleware("http")
+async def log_requests(request: Request, call_next: Callable[[Request], Awaitable[StreamingResponse]]) -> StreamingResponse:
+    start_time = time.time()
+    status_code: int = 200
+    
+    try:
+        response: StreamingResponse = await call_next(request)
+        status_code = response.status_code
+    except Exception as e:
+        status_code = 500
+        logger.error("Excepción no manejada en solicitud %s %s: %s", request.method, request.url.path, e, exc_info=True)
+        raise e
+    finally:
+        process_time: float = (time.time() - start_time) * 1000
+        logger.info(
+            "%s %s | Status: %s | Processed in %.2fms",
+            request.method,
+            request.url.path,
+            status_code,
+            process_time
+        )
+        
+    return response
+
+
 # Agregar los controladores a la API
 app.include_router(academic_cycle_controller)
 app.include_router(attendance_controller)
@@ -70,6 +102,10 @@ app.include_router(schedule_controller)
 app.include_router(signature_controller)
 app.include_router(student_controller)
 app.include_router(user_controller)
+app.include_router(exports_controller)
+app.include_router(metrics_controller)
+app.include_router(reports_controller)
+app.include_router(uploads_controller)
 
 
 # Ruta base de la API
