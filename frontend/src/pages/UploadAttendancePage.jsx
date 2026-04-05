@@ -117,7 +117,7 @@ export default function UploadAttendancePage() {
             <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>arrow_back</span>
             Inicio
           </Link>
-          <h1 className="headline mb-0" style={{ fontSize: '1.6rem', fontWeight: 700 }}>Subir Asistencias (Excel)</h1>
+          <h1 className="headline mb-0" style={{ fontSize: '1.6rem', fontWeight: 700 }}>Subir Asistencias (Excel/XLSM)</h1>
           <p style={{ color: 'var(--on-surface-dim)', fontSize: '0.85rem', marginBottom: 0 }}>
             Importa las horas de llegada desde la plantilla institucional. Las celdas de cada día deben contener la hora en formato HH:MM.
           </p>
