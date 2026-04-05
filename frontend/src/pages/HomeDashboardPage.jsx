@@ -111,23 +111,23 @@ export default function HomeDashboardPage() {
 
   return (
     <>
-      <div className="mb-4">
+      <div className="dashboard-welcome mb-3 mb-xl-4">
         <p className="mb-1" style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--on-surface-dim)' }}>
           <span className="material-symbols-outlined me-1" style={{ fontSize: '0.9rem' }}>circle</span>
           {user?.roleName ?? 'Usuario'} · Sistema activo
         </p>
-        <h1 className="headline mb-1" style={{ fontSize: '1.9rem', fontWeight: 700 }}>
+        <h1 className="headline mb-1 dashboard-welcome-title" style={{ fontSize: '1.9rem', fontWeight: 700 }}>
           {greeting()}, {user?.firstName ?? 'usuario'}
         </h1>
-        <p style={{ color: 'var(--on-surface-dim)', fontSize: '0.9rem' }}>
+        <p className="dashboard-welcome-subtitle" style={{ color: 'var(--on-surface-dim)', fontSize: '0.9rem' }}>
           Universidades para el Bienestar Benito Juárez García — Panel de Control
         </p>
       </div>
 
-      <div className="row g-3">
+      <div className="row g-2 dashboard-modules-grid">
         {modules.map(m => (
           <div key={m.path} className="col-12 col-sm-6 col-xl-4">
-            <DashboardModuleCard path={m.path} icon={m.icon} title={m.title} desc={m.desc} />
+            <DashboardModuleCard path={m.path} icon={m.icon} title={m.title} desc={m.desc} compact />
           </div>
         ))}
       </div>

@@ -1,28 +1,40 @@
+import mexicoLogo from '@/assets/mexico.svg';
+import bannerImage from '@/assets/Banner_UBBJ.png';
+
 export default function LoginHeroPanel() {
   return (
-    <div className="d-none d-lg-flex flex-column justify-content-between p-5 text-light" style={{ borderRight: '1px solid #3e4042' }}>
-      <div>
-        <div className="d-flex align-items-center mb-4">
-          <span className="material-symbols-outlined fs-2 text-primary me-2">account_balance</span>
-          <h4 className="headline fw-bold mb-0 text-primary">Sistema de Asistencias</h4>
+    <div
+      className="login-hero d-none d-lg-flex"
+      style={{ backgroundImage: `linear-gradient(145deg, rgba(18, 4, 10, 0.9), rgba(86, 14, 42, 0.72)), url(${bannerImage})` }}
+    >
+      <div className="login-hero-inner">
+        <div className="login-hero-brand">
+          <img src={mexicoLogo} alt="UBBJ" className="login-hero-logo" />
+          <div>
+            <p className="login-hero-kicker mb-1">Sistema institucional</p>
+            <h1 className="login-hero-title mb-0">Universidad del Bienestar Benito Juárez García</h1>
+          </div>
         </div>
-        <h1 className="headline display-5 fw-bold mt-5">
-          Universidades para el Bienestar Benito Juárez García <br />
-          <span className="text-primary">(UBBJ)</span>
-        </h1>
-        <p className="mt-4 text-secondary fs-5" style={{ fontWeight: 300 }}>
-          Integridad académica, archivada digitalmente. Seguro, inmutable y permanente.
+
+        <p className="login-hero-copy mb-0">
+          Registro de asistencias, reportes y control académico con acceso exclusivo para personal autorizado.
         </p>
+
+        <div className="login-hero-stats">
+          <div>
+            <span className="login-hero-stat-label">Módulos</span>
+            <strong>Académicos</strong>
+          </div>
+          <div>
+            <span className="login-hero-stat-label">Acceso</span>
+            <strong>Institucional</strong>
+          </div>
+        </div>
       </div>
-      <div className="d-flex gap-5 mt-5 pt-5">
-        <div>
-          <p className="text-primary fw-bold text-uppercase mb-1" style={{ fontSize: '0.8rem', letterSpacing: '2px' }}>Establecido</p>
-          <h5 className="headline text-light">1894</h5>
-        </div>
-        <div>
-          <p className="text-primary fw-bold text-uppercase mb-1" style={{ fontSize: '0.8rem', letterSpacing: '2px' }}>Versión</p>
-          <h5 className="headline text-light">v1.0.4 - ESTABLE</h5>
-        </div>
+
+      <div className="login-hero-footer">
+        <span className="material-symbols-outlined">lock</span>
+        <span>Acceso seguro para profesores y administradores</span>
       </div>
     </div>
   );

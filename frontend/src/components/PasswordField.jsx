@@ -8,12 +8,28 @@ export default function PasswordField({
   onChange,
   placeholder = '••••••••••••',
   required = true,
+  variant = 'dark',
 }) {
   const [showPassword, setShowPassword] = useState(false);
+  const isLight = variant === 'light';
+
+  const labelClassName = isLight
+    ? 'text-dark text-uppercase fw-bold'
+    : 'text-secondary text-uppercase fw-bold';
+
+  const controlClassName = isLight
+    ? 'p-3 pe-5 login-input-light'
+    : 'bg-dark text-light border-secondary p-3 pe-5';
+
+  const controlStyle = isLight
+    ? { paddingRight: '3rem' }
+    : { paddingRight: '3rem' };
+
+  const toggleColor = isLight ? 'var(--primary)' : 'var(--secondary)';
 
   return (
     <Form.Group className="mb-4">
-      <Form.Label className="text-secondary text-uppercase fw-bold" style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>
+      <Form.Label className={labelClassName} style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>
         {label}
       </Form.Label>
       <div className="position-relative">
@@ -21,11 +37,11 @@ export default function PasswordField({
           id={id}
           type={showPassword ? 'text' : 'password'}
           placeholder={placeholder}
-          className="bg-dark text-light border-secondary p-3 pe-5"
+          className={controlClassName}
           value={value}
           onChange={onChange}
           required={required}
-          style={{ paddingRight: '3rem' }}
+          style={controlStyle}
         />
         <button
           type="button"
@@ -38,7 +54,7 @@ export default function PasswordField({
             background: 'none',
             border: 'none',
             cursor: 'pointer',
-            color: 'var(--secondary)',
+            color: toggleColor,
             opacity: 0.75,
             lineHeight: 1,
             padding: 0,
