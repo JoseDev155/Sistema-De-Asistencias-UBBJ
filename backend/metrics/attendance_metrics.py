@@ -1,6 +1,6 @@
 # Librerias
 from typing import Dict, Any
-from datetime import date, time, timedelta
+from datetime import date, time
 from sqlalchemy.orm import Session
 # Importar directorios del proyecto
 from models import Attendance, Enrollment, Schedule

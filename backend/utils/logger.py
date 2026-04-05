@@ -7,7 +7,7 @@ LOGS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs")
 os.makedirs(LOGS_DIR, exist_ok=True)
 
 # Instanciar el logger principal
-logger = logging.getLogger("antigravity_api")
+logger = logging.getLogger("backend_ubbj_api")
 logger.setLevel(logging.INFO)
 
 # Formateador general

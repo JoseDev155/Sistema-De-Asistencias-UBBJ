@@ -2,11 +2,21 @@
 from sqlalchemy.orm import Session
 from datetime import date, time
 # Importar directorios del proyecto
-from models import Attendance
+from models import Attendance, Enrollment, Student
 
 # Metodos
 def get_all(db: Session):
     return db.query(Attendance).all()
+
+def get_calculated_by_group_with_nickname(db: Session, group_id: str):
+    return (
+        db.query(Attendance, Student.nickname.label("nickname"))
+        .join(Enrollment, Attendance.enrollment_id == Enrollment.id)
+        .join(Student, Enrollment.student_id == Student.id)
+        .filter(Enrollment.group_id == group_id)
+        .order_by(Attendance.attendance_date.asc(), Attendance.id.asc())
+        .all()
+    )
 
 def search_by_id(db: Session, id: int):
     return db.query(Attendance).filter(Attendance.id == id).first()

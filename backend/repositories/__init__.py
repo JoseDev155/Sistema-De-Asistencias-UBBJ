@@ -11,6 +11,7 @@ from .academic_cycle_repository import (
 # Attendance Repository
 from .attendance_repository import (
     get_all as attendance_get_all,
+    get_calculated_by_group_with_nickname as attendance_get_calculated_by_group_with_nickname,
     search_by_id as attendance_search_by_id,
     search_by_arrival as attendance_search_by_arrival,
     search_by_enrollment_and_date as attendance_search_by_enrollment_and_date,
@@ -126,6 +127,7 @@ __all__ = [
     "academic_cycle_destroy",
     # Attendance
     "attendance_get_all",
+    "attendance_get_calculated_by_group_with_nickname",
     "attendance_search_by_id",
     "attendance_search_by_arrival",
     "attendance_search_by_enrollment_and_date",

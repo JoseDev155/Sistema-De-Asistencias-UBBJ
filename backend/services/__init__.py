@@ -12,6 +12,7 @@ from .academic_cycle_service import (
 from .attendance_service import (
     get_all_service as get_all_attendances,
     get_calculated_attendances_by_group_service as get_calculated_attendances_by_group,
+    get_calculated_attendances_by_group_with_nickname_service,
     search_by_id_service as search_attendance_by_id,
     create_attendance_service,
     update_attendance_service,

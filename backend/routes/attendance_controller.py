@@ -7,10 +7,11 @@ from services import (
     destroy_attendance_service,
     get_all_attendances as get_all_service,
     get_calculated_attendances_by_group as get_calculated_by_group_service,
+    get_calculated_attendances_by_group_with_nickname_service as get_calculated_by_group_with_nickname_service,
     search_attendance_by_id as search_by_id_service,
     update_attendance_service
 )
-from schemas import AttendanceCreate, AttendanceResponse, AttendanceUpdate, CalculatedAttendanceResponse
+from schemas import AttendanceCreate, AttendanceResponse, AttendanceUpdate, CalculatedAttendanceResponse, CalculatedAttendanceWithNicknameResponse
 from database import get_db
 from models import User
 from utils import get_current_professor_or_admin_user, get_current_admin_user
@@ -43,6 +44,19 @@ async def get_calculated_attendances(
     current_user: User = Depends(get_current_professor_or_admin_user)
 ) -> list[CalculatedAttendanceResponse]:
     attendances_list = get_calculated_by_group_service(group_id, db)
+    return attendances_list
+
+
+@attendance_controller.get("/attendances/group/{group_id}/calculated-with-nickname", tags=["attendances"],
+                          description="Endpoint para obtener asistencias de un grupo con el estado calculado y el nickname del estudiante. Admin y Profesor.",
+                          response_model=list[CalculatedAttendanceWithNicknameResponse],
+                          status_code=status.HTTP_200_OK)
+async def get_calculated_attendances_with_nickname(
+    group_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_professor_or_admin_user)
+) -> list[CalculatedAttendanceWithNicknameResponse]:
+    attendances_list = get_calculated_by_group_with_nickname_service(group_id, db)
     return attendances_list
 
 

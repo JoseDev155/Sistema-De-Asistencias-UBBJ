@@ -1,3 +1,4 @@
+from typing import TypedDict
 from pydantic import BaseModel, ConfigDict
 from datetime import date, time
 
@@ -28,4 +29,25 @@ class AttendanceResponse(AttendanceBase):
 
 # 5. RESPONSE CALCULADO: Inyecta el status computado
 class CalculatedAttendanceResponse(AttendanceResponse):
+    status: str
+
+class CalculatedAttendanceDict(TypedDict):
+    id: int
+    attendance_date: date
+    arrival_time: time | None
+    notes: str | None
+    enrollment_id: int
+    status: str
+
+class CalculatedAttendanceWithNicknameResponse(AttendanceBase):
+    id: int
+    nickname: str | None = None
+    status: str
+
+class CalculatedAttendanceWithNicknameDict(TypedDict):
+    id: int
+    attendance_date: date
+    arrival_time: time | None
+    notes: str | None
+    nickname: str | None
     status: str

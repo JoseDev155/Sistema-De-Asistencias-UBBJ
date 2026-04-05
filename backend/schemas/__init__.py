@@ -31,6 +31,9 @@ from .attendance_schema import (
     AttendanceUpdate,
     AttendanceResponse,
     CalculatedAttendanceResponse,
+    CalculatedAttendanceDict,
+    CalculatedAttendanceWithNicknameResponse,
+    CalculatedAttendanceWithNicknameDict,
 )
 
 # Schemas para Career
@@ -99,6 +102,9 @@ __all__ = [
     "AttendanceUpdate",
     "AttendanceResponse",
     "CalculatedAttendanceResponse",
+    "CalculatedAttendanceDict",
+    "CalculatedAttendanceWithNicknameResponse",
+    "CalculatedAttendanceWithNicknameDict",
     # Career
     "CareerBase",
     "CareerCreate",
