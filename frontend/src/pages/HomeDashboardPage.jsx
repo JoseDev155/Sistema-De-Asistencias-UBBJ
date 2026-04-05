@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import DashboardModuleCard from '@/components/DashboardModuleCard';
 
 // Definición de módulos del hub: se muestran según el rol
 const ADMIN_MODULES = [
@@ -111,7 +111,6 @@ export default function HomeDashboardPage() {
 
   return (
     <>
-      {/* Cabecera de bienvenida */}
       <div className="mb-4">
         <p className="mb-1" style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--on-surface-dim)' }}>
           <span className="material-symbols-outlined me-1" style={{ fontSize: '0.9rem' }}>circle</span>
@@ -125,17 +124,10 @@ export default function HomeDashboardPage() {
         </p>
       </div>
 
-      {/* Grid de módulos */}
       <div className="row g-3">
         {modules.map(m => (
           <div key={m.path} className="col-12 col-sm-6 col-xl-4">
-            <Link to={m.path} className="module-card">
-              <div className="module-card-icon">
-                <span className="material-symbols-outlined">{m.icon}</span>
-              </div>
-              <div className="module-card-title">{m.title}</div>
-              <div className="module-card-desc">{m.desc}</div>
-            </Link>
+            <DashboardModuleCard path={m.path} icon={m.icon} title={m.title} desc={m.desc} />
           </div>
         ))}
       </div>

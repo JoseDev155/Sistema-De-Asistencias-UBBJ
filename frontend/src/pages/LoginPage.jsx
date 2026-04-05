@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { fetchApi } from '@/api/apiFunctions';
 import { useAuth } from '@/context/AuthContext';
+import LoginHeroPanel from '@/components/LoginHeroPanel';
+import PasswordField from '@/components/PasswordField';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -37,32 +38,10 @@ export default function LoginPage() {
   return (
     <Container fluid className="vh-100 d-flex align-items-center justify-content-center" style={{ backgroundColor: 'var(--background)' }}>
       <Row className="w-100 shadow-lg rounded overflow-hidden" style={{ maxWidth: '1000px', backgroundColor: 'var(--surface)' }}>
-
-        {/* Banner Institucional */}
-        <Col lg={6} className="d-none d-lg-flex flex-column justify-content-between p-5 text-light" style={{ borderRight: '1px solid #3e4042' }}>
-          <div>
-            <div className="d-flex align-items-center mb-4">
-              <span className="material-symbols-outlined fs-2 text-primary me-2">account_balance</span>
-              <h4 className="headline fw-bold mb-0 text-primary">Sistema de Asistencias</h4>
-            </div>
-            <h1 className="headline display-5 fw-bold mt-5">Universidades para el Bienestar Benito Juárez García <br /> <span className="text-primary">(UBBJ)</span></h1>
-            <p className="mt-4 text-secondary fs-5" style={{ fontWeight: 300 }}>
-              Integridad académica, archivada digitalmente. Seguro, inmutable y permanente.
-            </p>
-          </div>
-          <div className="d-flex gap-5 mt-5 pt-5">
-            <div>
-              <p className="text-primary fw-bold text-uppercase mb-1" style={{ fontSize: '0.8rem', letterSpacing: '2px' }}>Establecido</p>
-              <h5 className="headline text-light">1894</h5>
-            </div>
-            <div>
-              <p className="text-primary fw-bold text-uppercase mb-1" style={{ fontSize: '0.8rem', letterSpacing: '2px' }}>Versión</p>
-              <h5 className="headline text-light">v1.0.4 - ESTABLE</h5>
-            </div>
-          </div>
+        <Col lg={6}>
+          <LoginHeroPanel />
         </Col>
 
-        {/* Formulario de Login */}
         <Col lg={6} xs={12} className="p-sm-5 p-4 d-flex align-items-center">
           <div className="w-100">
             <div className="mb-4 d-flex align-items-center d-lg-none">
@@ -87,36 +66,12 @@ export default function LoginPage() {
                 />
               </Form.Group>
 
-              <Form.Group className="mb-4">
-                <Form.Label className="text-secondary text-uppercase fw-bold" style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>Clave de Acceso</Form.Label>
-                <div className="position-relative">
-                  <Form.Control
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="••••••••••••"
-                    className="bg-dark text-light border-secondary p-3 pe-5"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    style={{ paddingRight: '3rem' }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(prev => !prev)}
-                    style={{
-                      position: 'absolute', top: '50%', right: '0.9rem',
-                      transform: 'translateY(-50%)',
-                      background: 'none', border: 'none', cursor: 'pointer',
-                      color: 'var(--secondary)', opacity: 0.75, lineHeight: 1, padding: 0
-                    }}
-                    tabIndex={-1}
-                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                  >
-                    <span className="material-symbols-outlined" style={{ fontSize: '1.3rem', userSelect: 'none' }}>
-                      {showPassword ? 'visibility_off' : 'visibility'}
-                    </span>
-                  </button>
-                </div>
-              </Form.Group>
+              <PasswordField
+                id="input-login-password"
+                label="Clave de Acceso"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
 
               <div className="d-grid mt-5">
                 <Button variant="danger" size="lg" type="submit" className="text-uppercase fw-bold border-0 p-3" disabled={loading}>

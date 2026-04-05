@@ -1,7 +1,11 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Button, Spinner, Alert } from 'react-bootstrap';
 import { useAuth } from '@/context/AuthContext';
+import PageHeader from '@/components/PageHeader';
+import LoadingState from '@/components/LoadingState';
+import SurfacePanel from '@/components/SurfacePanel';
+import StatCard from '@/components/StatCard';
+import EmptyState from '@/components/EmptyState';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000';
 
@@ -16,6 +20,12 @@ export default function ReportsPage() {
   const [report, setReport] = useState(null);
 
   const MONTHS = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+  const renderStat = (label, value, icon, color) => (
+    <div className="col-6 col-sm-4">
+      <StatCard label={label} value={value} icon={icon} color={color} />
+    </div>
+  );
 
   const fetchReport = async (e) => {
     e.preventDefault();
@@ -38,35 +48,16 @@ export default function ReportsPage() {
     }
   };
 
-  const statCard = (label, value, icon, color = 'var(--on-surface)') => (
-    <div style={{ background: 'var(--surface-raised)', border: '1px solid var(--border)', borderRadius: 8, padding: '1rem' }}>
-      <div className="d-flex align-items-center gap-2 mb-1">
-        <span className="material-symbols-outlined" style={{ fontSize: '1.1rem', color }}>{icon}</span>
-        <span style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--on-surface-dim)' }}>{label}</span>
-      </div>
-      <div style={{ fontSize: '2rem', fontWeight: 700, fontFamily: 'Instrument Sans, sans-serif', color }}>{value}</div>
-    </div>
-  );
-
   return (
     <>
-      <div className="page-header">
-        <div>
-          <Link to="/dashboard" className="page-header-back">
-            <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>arrow_back</span>
-            Inicio
-          </Link>
-          <h1 className="headline mb-0" style={{ fontSize: '1.6rem', fontWeight: 700 }}>Reportes y Métricas</h1>
-          <p style={{ color: 'var(--on-surface-dim)', fontSize: '0.85rem', marginBottom: 0 }}>
-            Genera reportes mensuales de asistencia por grupo y descarga la plantilla Excel institucional.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Reportes y Métricas"
+        description="Genera reportes mensuales de asistencia por grupo y descarga la plantilla Excel institucional."
+      />
 
       <div className="row g-4">
-        {/* Parámetros */}
         <div className="col-12 col-lg-4">
-          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, padding: '1.5rem' }}>
+          <SurfacePanel style={{ padding: '1.5rem' }}>
             <h5 className="headline mb-3" style={{ fontWeight: 700, fontSize: '1rem' }}>
               <span className="material-symbols-outlined me-2" style={{ fontSize: '1.1rem', color: 'var(--primary-light)' }}>tune</span>
               Parámetros del Reporte
@@ -90,20 +81,14 @@ export default function ReportsPage() {
                 {loading ? <><Spinner size="sm" animation="border" className="me-2" />Generando...</> : 'Generar Reporte'}
               </Button>
             </form>
-          </div>
+          </SurfacePanel>
         </div>
 
-        {/* Resultados */}
         <div className="col-12 col-lg-8">
           {!report && !loading && !error && (
-            <div className="d-flex align-items-center justify-content-center h-100" style={{ minHeight: 240, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--on-surface-dim)' }}>
-              <div className="text-center">
-                <span className="material-symbols-outlined d-block mb-2" style={{ fontSize: '2.5rem' }}>bar_chart</span>
-                <p className="mb-0" style={{ fontSize: '0.9rem' }}>Configura los parámetros y genera el reporte.</p>
-              </div>
-            </div>
+            <EmptyState icon="bar_chart" message="Configura los parámetros y genera el reporte." />
           )}
-          {loading && <div className="text-center py-5"><Spinner animation="border" variant="danger" /></div>}
+          {loading && <LoadingState />}
           {error && <Alert variant="danger">{error}</Alert>}
 
           {report && !loading && (
@@ -114,19 +99,17 @@ export default function ReportsPage() {
                 </p>
               </div>
 
-              {/* Métricas globales */}
               <div className="row g-3 mb-4">
-                <div className="col-6 col-sm-4">{statCard('Presentes', report.global_stats?.PRESENT ?? 0, 'check_circle', '#86efac')}</div>
-                <div className="col-6 col-sm-4">{statCard('Ausentes', report.global_stats?.ABSENT ?? 0, 'cancel', '#fca5a5')}</div>
-                <div className="col-6 col-sm-4">{statCard('Retardos', report.global_stats?.LATE ?? 0, 'schedule', '#fde68a')}</div>
-                <div className="col-6 col-sm-4">{statCard('Justificados', report.global_stats?.JUSTIFIED ?? 0, 'verified', '#93c5fd')}</div>
-                <div className="col-6 col-sm-4">{statCard('Puntualidad', `${report.global_stats?.PUNCTUALITY_PERCENTAGE ?? 0}%`, 'trending_up', 'var(--primary-light)')}</div>
-                <div className="col-6 col-sm-4">{statCard('Ausentismo', `${report.global_stats?.ABSENT_PERCENTAGE ?? 0}%`, 'trending_down', '#fca5a5')}</div>
+                {renderStat('Presentes', report.global_stats?.PRESENT ?? 0, 'check_circle', '#86efac')}
+                {renderStat('Ausentes', report.global_stats?.ABSENT ?? 0, 'cancel', '#fca5a5')}
+                {renderStat('Retardos', report.global_stats?.LATE ?? 0, 'schedule', '#fde68a')}
+                {renderStat('Justificados', report.global_stats?.JUSTIFIED ?? 0, 'verified', '#93c5fd')}
+                {renderStat('Puntualidad', `${report.global_stats?.PUNCTUALITY_PERCENTAGE ?? 0}%`, 'trending_up', 'var(--primary-light)')}
+                {renderStat('Ausentismo', `${report.global_stats?.ABSENT_PERCENTAGE ?? 0}%`, 'trending_down', '#fca5a5')}
               </div>
 
-              {/* Detalle por estudiante */}
               {report.students && report.students.length > 0 && (
-                <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10 }}>
+                <SurfacePanel>
                   <div className="px-3 pt-3 pb-2">
                     <h6 className="headline mb-0" style={{ fontWeight: 700 }}>Desglose por Estudiante</h6>
                   </div>
@@ -154,7 +137,7 @@ export default function ReportsPage() {
                       </tbody>
                     </table>
                   </div>
-                </div>
+                </SurfacePanel>
               )}
             </>
           )}

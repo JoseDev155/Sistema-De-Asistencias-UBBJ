@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Modal, Button, Form, Spinner, Alert } from 'react-bootstrap';
+import { Button, Form, Spinner, Alert } from 'react-bootstrap';
 import { useAuth } from '@/context/AuthContext';
 import { apiFetch } from '@/api/apiClient';
+import PageHeader from '@/components/PageHeader';
+import LoadingState from '@/components/LoadingState';
+import SurfacePanel from '@/components/SurfacePanel';
+import CrudModal from '@/components/CrudModal';
 
 export default function GroupsPage() {
   const { user, token } = useAuth();
@@ -90,37 +93,22 @@ export default function GroupsPage() {
   // ── Render ───────────────────────────────────────────────────
   return (
     <>
-      {/* Cabecera */}
-      <div className="page-header">
-        <div>
-          <Link to="/dashboard" className="page-header-back">
-            <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>arrow_back</span>
-            Inicio
-          </Link>
-          <h1 className="headline mb-0" style={{ fontSize: '1.6rem', fontWeight: 700 }}>
-            {isAdmin ? 'Gestión de Grupos' : 'Mis Grupos'}
-          </h1>
-          <p style={{ color: 'var(--on-surface-dim)', fontSize: '0.85rem', marginBottom: 0 }}>
-            {isAdmin
-              ? 'Crea y administra los grupos académicos asignados a profesores.'
-              : 'Grupos en los que impartes clase. Solo lectura.'}
-          </p>
-        </div>
-        {isAdmin && (
-          <Button id="btn-nuevo-grupo" variant="danger"  onClick={openCreate}>
+      <PageHeader
+        title={isAdmin ? 'Gestión de Grupos' : 'Mis Grupos'}
+        description={isAdmin ? 'Crea y administra los grupos académicos asignados a profesores.' : 'Grupos en los que impartes clase. Solo lectura.'}
+        action={isAdmin && (
+          <Button id="btn-nuevo-grupo" variant="danger" onClick={openCreate}>
             <span className="material-symbols-outlined me-2" style={{ fontSize: '1rem' }}>add</span>
             Nuevo Grupo
           </Button>
         )}
-      </div>
+      />
 
-      {/* Estado de carga / error */}
-      {loading && <div className="text-center py-5"><Spinner animation="border" variant="danger" /></div>}
-      {error   && <Alert variant="danger">{error}</Alert>}
+      {loading && <LoadingState />}
+      {error && <Alert variant="danger">{error}</Alert>}
 
-      {/* Tabla */}
       {!loading && !error && (
-        <div className="table-responsive" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10 }}>
+        <SurfacePanel className="table-responsive">
           <table className="table table-dark table-hover mb-0 crud-table">
             <thead>
               <tr>
@@ -156,78 +144,40 @@ export default function GroupsPage() {
               )}
             </tbody>
           </table>
-        </div>
+        </SurfacePanel>
       )}
 
-      {/* Modal crear / editar (solo Admin) */}
       {isAdmin && (
-        <Modal show={showModal} onHide={() => setShowModal(false)} centered data-bs-theme="dark">
-          <Modal.Header closeButton style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-            <Modal.Title className="headline" style={{ fontSize: '1.1rem' }}>
-              {editing ? 'Editar Grupo' : 'Nuevo Grupo'}
-            </Modal.Title>
-          </Modal.Header>
-          <Form onSubmit={handleSave}>
-            <Modal.Body style={{ background: 'var(--surface)' }}>
-              {formError && <Alert variant="danger" className="py-2">{formError}</Alert>}
-              {!editing && (
-                <Form.Group className="mb-3">
-                  <Form.Label>ID del Grupo</Form.Label>
-                  <Form.Control
-                    id="input-grupo-id"
-                    type="text"
-                    placeholder="Ej: GRP008"
-                    value={form.id}
-                    onChange={e => setForm(f => ({ ...f, id: e.target.value }))}
-                    required
-                    className="bg-dark text-light border-secondary"
-                  />
-                </Form.Group>
-              )}
-              <Form.Group className="mb-3">
-                <Form.Label>Nombre del Grupo</Form.Label>
-                <Form.Control
-                  id="input-grupo-nombre"
-                  type="text"
-                  placeholder="Ej: Matemáticas I — Turno Matutino"
-                  value={form.name}
-                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                  required
-                  className="bg-dark text-light border-secondary"
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Descripción <span style={{ color: 'var(--on-surface-dim)' }}>(opcional)</span></Form.Label>
-                <Form.Control
-                  id="input-grupo-desc"
-                  as="textarea"
-                  rows={2}
-                  placeholder="Descripción breve del grupo"
-                  value={form.description}
-                  onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                  className="bg-dark text-light border-secondary"
-                />
-              </Form.Group>
-              <Form.Group className="mb-1">
-                <Form.Label>ID del Profesor Asignado <span style={{ color: 'var(--on-surface-dim)' }}>(opcional)</span></Form.Label>
-                <Form.Control
-                  id="input-grupo-profesor"
-                  type="text"
-                  placeholder="Ej: PROF001"
-                  value={form.user_id}
-                  onChange={e => setForm(f => ({ ...f, user_id: e.target.value }))}
-                  className="bg-dark text-light border-secondary"
-                />
-              </Form.Group>
-            </Modal.Body>
-            <Modal.Footer style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-              <Button variant="outline-secondary" onClick={() => setShowModal(false)}>Cancelar</Button>
-              <Button id="btn-guardar-grupo" type="submit" variant="danger"  disabled={saving}>
-                {saving ? <Spinner size="sm" animation="border" /> : (editing ? 'Guardar Cambios' : 'Crear Grupo')}
-              </Button>
-            </Modal.Footer>
-          </Form>
-        </Modal>
+        <CrudModal
+          show={showModal}
+          onHide={() => setShowModal(false)}
+          title={editing ? 'Editar Grupo' : 'Nuevo Grupo'}
+          onSubmit={handleSave}
+          error={formError}
+          saving={saving}
+          submitLabel={editing ? 'Guardar Cambios' : 'Crear Grupo'}
+          savingLabel="Guardando..."
+          submitId="btn-guardar-grupo"
+        >
+          {!editing && (
+            <Form.Group className="mb-3">
+              <Form.Label>ID del Grupo</Form.Label>
+              <Form.Control id="input-grupo-id" type="text" placeholder="Ej: GRP008" value={form.id} onChange={e => setForm(f => ({ ...f, id: e.target.value }))} required className="bg-dark text-light border-secondary" />
+            </Form.Group>
+          )}
+          <Form.Group className="mb-3">
+            <Form.Label>Nombre del Grupo</Form.Label>
+            <Form.Control id="input-grupo-nombre" type="text" placeholder="Ej: Matemáticas I — Turno Matutino" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required className="bg-dark text-light border-secondary" />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Descripción <span style={{ color: 'var(--on-surface-dim)' }}>(opcional)</span></Form.Label>
+            <Form.Control id="input-grupo-desc" as="textarea" rows={2} placeholder="Descripción breve del grupo" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} className="bg-dark text-light border-secondary" />
+          </Form.Group>
+          <Form.Group className="mb-1">
+            <Form.Label>ID del Profesor Asignado <span style={{ color: 'var(--on-surface-dim)' }}>(opcional)</span></Form.Label>
+            <Form.Control id="input-grupo-profesor" type="text" placeholder="Ej: PROF001" value={form.user_id} onChange={e => setForm(f => ({ ...f, user_id: e.target.value }))} className="bg-dark text-light border-secondary" />
+          </Form.Group>
+        </CrudModal>
       )}
     </>
   );

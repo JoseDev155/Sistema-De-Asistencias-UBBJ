@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Modal, Button, Form, Spinner, Alert, Badge } from 'react-bootstrap';
+import { Button, Form, Spinner, Alert } from 'react-bootstrap';
 import { useAuth } from '@/context/AuthContext';
 import { apiFetch } from '@/api/apiClient';
+import PageHeader from '@/components/PageHeader';
+import LoadingState from '@/components/LoadingState';
+import SurfacePanel from '@/components/SurfacePanel';
+import SearchField from '@/components/SearchField';
+import CrudModal from '@/components/CrudModal';
 
 export default function UsersPage() {
   const { token } = useAuth();
@@ -105,37 +109,30 @@ export default function UsersPage() {
 
   return (
     <>
-      <div className="page-header">
-        <div>
-          <Link to="/dashboard" className="page-header-back">
-            <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>arrow_back</span>
-            Inicio
-          </Link>
-          <h1 className="headline mb-0" style={{ fontSize: '1.6rem', fontWeight: 700 }}>Usuarios del Sistema</h1>
-          <p style={{ color: 'var(--on-surface-dim)', fontSize: '0.85rem', marginBottom: 0 }}>
-            Administradores y profesores con acceso al sistema.
-          </p>
-        </div>
-        <Button id="btn-nuevo-usuario" variant="danger" onClick={openCreate}>
-          <span className="material-symbols-outlined me-2" style={{ fontSize: '1rem' }}>person_add</span>
-          Nuevo Usuario
-        </Button>
-      </div>
+      <PageHeader
+        title="Usuarios del Sistema"
+        description="Administradores y profesores con acceso al sistema."
+        action={(
+          <Button id="btn-nuevo-usuario" variant="danger" onClick={openCreate}>
+            <span className="material-symbols-outlined me-2" style={{ fontSize: '1rem' }}>person_add</span>
+            Nuevo Usuario
+          </Button>
+        )}
+      />
 
-      <div className="mb-3" style={{ maxWidth: 360 }}>
-        <div className="input-group">
-          <span className="input-group-text bg-dark border-secondary text-secondary">
-            <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>search</span>
-          </span>
-          <input id="input-buscar-usuario" type="text" className="form-control bg-dark text-light border-secondary" placeholder="Buscar por nombre, ID o correo..." value={search} onChange={e => setSearch(e.target.value)} />
-        </div>
-      </div>
+      <SearchField
+        id="input-buscar-usuario"
+        className="mb-3"
+        placeholder="Buscar por nombre, ID o correo..."
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+      />
 
-      {loading && <div className="text-center py-5"><Spinner animation="border" variant="danger" /></div>}
+      {loading && <LoadingState />}
       {error && <Alert variant="danger">{error}</Alert>}
 
       {!loading && !error && (
-        <div className="table-responsive" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10 }}>
+        <SurfacePanel className="table-responsive" footer={`${filtered.length} de ${users.length} usuarios`}>
           <table className="table table-dark table-hover mb-0 crud-table">
             <thead>
               <tr>
@@ -188,63 +185,54 @@ export default function UsersPage() {
               )}
             </tbody>
           </table>
-          <div className="px-3 py-2" style={{ color: 'var(--on-surface-dim)', fontSize: '0.8rem' }}>
-            {filtered.length} de {users.length} usuarios
-          </div>
-        </div>
+        </SurfacePanel>
       )}
 
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered data-bs-theme="dark">
-        <Modal.Header closeButton style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-          <Modal.Title className="headline" style={{ fontSize: '1.1rem' }}>
-            {editing ? 'Editar Usuario' : 'Nuevo Usuario del Sistema'}
-          </Modal.Title>
-        </Modal.Header>
-        <Form onSubmit={handleSave}>
-          <Modal.Body style={{ background: 'var(--surface)' }}>
-            {formError && <Alert variant="danger" className="py-2">{formError}</Alert>}
-            {!editing && (
-              <Form.Group className="mb-3">
-                <Form.Label>ID de Empleado</Form.Label>
-                <Form.Control id="input-usr-id" type="text" placeholder="Ej: PROF002" value={form.id} onChange={e => setForm(f => ({ ...f, id: e.target.value }))} required className="bg-dark text-light border-secondary" />
-              </Form.Group>
-            )}
-            <div className="row g-2 mb-3">
-              <div className="col-6">
-                <Form.Label>Nombre(s)</Form.Label>
-                <Form.Control id="input-usr-nombre" type="text" placeholder="Nombre" value={form.first_name} onChange={e => setForm(f => ({ ...f, first_name: e.target.value }))} required className="bg-dark text-light border-secondary" />
-              </div>
-              <div className="col-6">
-                <Form.Label>Apellidos</Form.Label>
-                <Form.Control id="input-usr-apellido" type="text" placeholder="Apellidos" value={form.last_name} onChange={e => setForm(f => ({ ...f, last_name: e.target.value }))} required className="bg-dark text-light border-secondary" />
-              </div>
-            </div>
-            <Form.Group className="mb-3">
-              <Form.Label>Correo Electrónico</Form.Label>
-              <Form.Control id="input-usr-email" type="email" placeholder="correo@ubbj.edu.mx" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} required className="bg-dark text-light border-secondary" />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>
-                Contraseña {editing && <span style={{ color: 'var(--on-surface-dim)', fontSize: '0.8rem' }}>(dejar vacío para no cambiar)</span>}
-              </Form.Label>
-              <Form.Control id="input-usr-password" type="password" placeholder="••••••••" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} required={!editing} className="bg-dark text-light border-secondary" />
-            </Form.Group>
-            <Form.Group className="mb-1">
-              <Form.Label>Rol</Form.Label>
-              <Form.Select id="select-usr-rol" value={form.role_id} onChange={e => setForm(f => ({ ...f, role_id: e.target.value }))} className="bg-dark text-light border-secondary">
-                <option value={2}>Profesor</option>
-                <option value={1}>Administrador</option>
-              </Form.Select>
-            </Form.Group>
-          </Modal.Body>
-          <Modal.Footer style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-            <Button variant="outline-secondary" onClick={() => setShowModal(false)}>Cancelar</Button>
-            <Button id="btn-guardar-usuario" type="submit" variant="danger" disabled={saving}>
-              {saving ? <Spinner size="sm" animation="border" /> : (editing ? 'Guardar Cambios' : 'Crear Usuario')}
-            </Button>
-          </Modal.Footer>
-        </Form>
-      </Modal>
+      <CrudModal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        title={editing ? 'Editar Usuario' : 'Nuevo Usuario del Sistema'}
+        onSubmit={handleSave}
+        error={formError}
+        saving={saving}
+        submitLabel={editing ? 'Guardar Cambios' : 'Crear Usuario'}
+        savingLabel="Guardando..."
+        submitId="btn-guardar-usuario"
+      >
+        {!editing && (
+          <Form.Group className="mb-3">
+            <Form.Label>ID de Empleado</Form.Label>
+            <Form.Control id="input-usr-id" type="text" placeholder="Ej: PROF002" value={form.id} onChange={e => setForm(f => ({ ...f, id: e.target.value }))} required className="bg-dark text-light border-secondary" />
+          </Form.Group>
+        )}
+        <div className="row g-2 mb-3">
+          <div className="col-6">
+            <Form.Label>Nombre(s)</Form.Label>
+            <Form.Control id="input-usr-nombre" type="text" placeholder="Nombre" value={form.first_name} onChange={e => setForm(f => ({ ...f, first_name: e.target.value }))} required className="bg-dark text-light border-secondary" />
+          </div>
+          <div className="col-6">
+            <Form.Label>Apellidos</Form.Label>
+            <Form.Control id="input-usr-apellido" type="text" placeholder="Apellidos" value={form.last_name} onChange={e => setForm(f => ({ ...f, last_name: e.target.value }))} required className="bg-dark text-light border-secondary" />
+          </div>
+        </div>
+        <Form.Group className="mb-3">
+          <Form.Label>Correo Electrónico</Form.Label>
+          <Form.Control id="input-usr-email" type="email" placeholder="correo@ubbj.edu.mx" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} required className="bg-dark text-light border-secondary" />
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>
+            Contraseña {editing && <span style={{ color: 'var(--on-surface-dim)', fontSize: '0.8rem' }}>(dejar vacío para no cambiar)</span>}
+          </Form.Label>
+          <Form.Control id="input-usr-password" type="password" placeholder="••••••••" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} required={!editing} className="bg-dark text-light border-secondary" />
+        </Form.Group>
+        <Form.Group className="mb-1">
+          <Form.Label>Rol</Form.Label>
+          <Form.Select id="select-usr-rol" value={form.role_id} onChange={e => setForm(f => ({ ...f, role_id: e.target.value }))} className="bg-dark text-light border-secondary">
+            <option value={2}>Profesor</option>
+            <option value={1}>Administrador</option>
+          </Form.Select>
+        </Form.Group>
+      </CrudModal>
     </>
   );
 }

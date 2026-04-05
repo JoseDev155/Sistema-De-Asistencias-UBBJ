@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Modal, Button, Form, Spinner, Alert } from 'react-bootstrap';
+import { Button, Form, Spinner, Alert } from 'react-bootstrap';
 import { useAuth } from '@/context/AuthContext';
 import { apiFetch } from '@/api/apiClient';
+import PageHeader from '@/components/PageHeader';
+import LoadingState from '@/components/LoadingState';
+import SurfacePanel from '@/components/SurfacePanel';
+import CrudModal from '@/components/CrudModal';
 
 export default function AcademicCyclesPage() {
   const { user, token } = useAuth();
@@ -92,30 +95,22 @@ export default function AcademicCyclesPage() {
 
   return (
     <>
-      <div className="page-header">
-        <div>
-          <Link to="/dashboard" className="page-header-back">
-            <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>arrow_back</span>
-            Inicio
-          </Link>
-          <h1 className="headline mb-0" style={{ fontSize: '1.6rem', fontWeight: 700 }}>Ciclos Académicos</h1>
-          <p style={{ color: 'var(--on-surface-dim)', fontSize: '0.85rem', marginBottom: 0 }}>
-            {isAdmin ? 'Administra los periodos escolares institucionales.' : 'Periodos escolares disponibles. Solo lectura.'}
-          </p>
-        </div>
-        {isAdmin && (
-          <Button id="btn-nuevo-ciclo" variant="danger"  onClick={openCreate}>
+      <PageHeader
+        title="Ciclos Académicos"
+        description={isAdmin ? 'Administra los periodos escolares institucionales.' : 'Periodos escolares disponibles. Solo lectura.'}
+        action={isAdmin && (
+          <Button id="btn-nuevo-ciclo" variant="danger" onClick={openCreate}>
             <span className="material-symbols-outlined me-2" style={{ fontSize: '1rem' }}>add</span>
             Nuevo Ciclo
           </Button>
         )}
-      </div>
+      />
 
-      {loading && <div className="text-center py-5"><Spinner animation="border" variant="danger" /></div>}
+      {loading && <LoadingState />}
       {error && <Alert variant="danger">{error}</Alert>}
 
       {!loading && !error && (
-        <div className="table-responsive" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10 }}>
+        <SurfacePanel className="table-responsive">
           <table className="table table-dark table-hover mb-0 crud-table">
             <thead>
               <tr>
@@ -149,36 +144,30 @@ export default function AcademicCyclesPage() {
               )}
             </tbody>
           </table>
-        </div>
+        </SurfacePanel>
       )}
 
       {isAdmin && (
-        <Modal show={showModal} onHide={() => setShowModal(false)} centered data-bs-theme="dark">
-          <Modal.Header closeButton style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-            <Modal.Title className="headline" style={{ fontSize: '1.1rem' }}>
-              {editing ? 'Editar Ciclo' : 'Nuevo Ciclo Académico'}
-            </Modal.Title>
-          </Modal.Header>
-          <Form onSubmit={handleSave}>
-            <Modal.Body style={{ background: 'var(--surface)' }}>
-              {formError && <Alert variant="danger" className="py-2">{formError}</Alert>}
-              <Form.Group className="mb-3">
-                <Form.Label>Nombre del Ciclo</Form.Label>
-                <Form.Control id="input-ciclo-nombre" type="text" placeholder="Ej: Primavera 2025" value={form.cycle_name} onChange={e => setForm(f => ({ ...f, cycle_name: e.target.value }))} required className="bg-dark text-light border-secondary" />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Año Académico</Form.Label>
-                <Form.Control id="input-ciclo-anio" type="number" min="2020" max="2099" value={form.cycle_year} onChange={e => setForm(f => ({ ...f, cycle_year: parseInt(e.target.value) || new Date().getFullYear() }))} required className="bg-dark text-light border-secondary" />
-              </Form.Group>
-            </Modal.Body>
-            <Modal.Footer style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-              <Button variant="outline-secondary" onClick={() => setShowModal(false)}>Cancelar</Button>
-              <Button id="btn-guardar-ciclo" type="submit" variant="danger"  disabled={saving}>
-                {saving ? <Spinner size="sm" animation="border" /> : (editing ? 'Guardar Cambios' : 'Crear Ciclo')}
-              </Button>
-            </Modal.Footer>
-          </Form>
-        </Modal>
+        <CrudModal
+          show={showModal}
+          onHide={() => setShowModal(false)}
+          title={editing ? 'Editar Ciclo' : 'Nuevo Ciclo Académico'}
+          onSubmit={handleSave}
+          error={formError}
+          saving={saving}
+          submitLabel={editing ? 'Guardar Cambios' : 'Crear Ciclo'}
+          savingLabel="Guardando..."
+          submitId="btn-guardar-ciclo"
+        >
+          <Form.Group className="mb-3">
+            <Form.Label>Nombre del Ciclo</Form.Label>
+            <Form.Control id="input-ciclo-nombre" type="text" placeholder="Ej: Primavera 2025" value={form.cycle_name} onChange={e => setForm(f => ({ ...f, cycle_name: e.target.value }))} required className="bg-dark text-light border-secondary" />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Año Académico</Form.Label>
+            <Form.Control id="input-ciclo-anio" type="number" min="2020" max="2099" value={form.cycle_year} onChange={e => setForm(f => ({ ...f, cycle_year: parseInt(e.target.value) || new Date().getFullYear() }))} required className="bg-dark text-light border-secondary" />
+          </Form.Group>
+        </CrudModal>
       )}
     </>
   );

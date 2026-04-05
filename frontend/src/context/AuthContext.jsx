@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from 'react';
 
 // AuthContext: decodifica el JWT del localStorage y, si el payload no incluye
@@ -45,48 +46,62 @@ export function AuthProvider({ children }) {
   const [ready, setReady]   = useState(false);
 
   useEffect(() => {
-    if (!token) {
-      setUser(null);
-      setReady(true);
-      return;
-    }
+    let active = true;
 
-    const payload = parseJwtPayload(token);
+    const resolveSession = async () => {
+      if (!token) {
+        if (active) {
+          setUser(null);
+          setReady(true);
+        }
+        return;
+      }
 
-    // Si el payload ya contiene first_name y role_id, usarlo directamente
-    if (payload?.first_name && payload?.role_id != null) {
-      setUser(buildUser(payload));
-      setReady(true);
-      return;
-    }
+      const payload = parseJwtPayload(token);
 
-    // Fallback: solicitar datos al endpoint /auth/me
-    fetch(`${API_BASE}/auth/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(res => {
-        if (!res.ok) throw new Error('Token inválido');
-        return res.json();
-      })
-      .then(data => {
-        setUser({
-          id:         data.id,
-          roleId:     data.role_id,
-          isAdmin:    data.role_id === 1,
-          isProfesor: data.role_id === 2,
-          roleName:   data.role_id === 1 ? 'Administrador' : 'Profesor',
-          firstName:  data.first_name,
-          lastName:   data.last_name ?? '',
-          fullName:   `${data.first_name} ${data.last_name ?? ''}`.trim(),
+      if (payload?.first_name && payload?.role_id != null) {
+        if (active) {
+          setUser(buildUser(payload));
+          setReady(true);
+        }
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-      })
-      .catch(() => {
-        // Token inválido o expirado → limpiar sesión
+        if (!res.ok) throw new Error('Token inválido');
+        const data = await res.json();
+
+        if (active) {
+          setUser({
+            id:         data.id,
+            roleId:     data.role_id,
+            isAdmin:    data.role_id === 1,
+            isProfesor: data.role_id === 2,
+            roleName:   data.role_id === 1 ? 'Administrador' : 'Profesor',
+            firstName:  data.first_name,
+            lastName:   data.last_name ?? '',
+            fullName:   `${data.first_name} ${data.last_name ?? ''}`.trim(),
+          });
+        }
+      } catch {
         localStorage.removeItem('accessToken');
-        setToken(null);
-        setUser(null);
-      })
-      .finally(() => setReady(true));
+        if (active) {
+          setToken(null);
+          setUser(null);
+        }
+      } finally {
+        if (active) setReady(true);
+      }
+    };
+
+    resolveSession();
+
+    return () => {
+      active = false;
+    };
   }, [token]);
 
   // Escuchar cambios en localStorage (login/logout desde otras pestañas o desde LoginPage)

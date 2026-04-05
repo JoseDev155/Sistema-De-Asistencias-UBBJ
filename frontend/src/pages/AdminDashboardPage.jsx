@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import { fetchApi } from '@/api/apiFunctions';
+import SurfacePanel from '@/components/SurfacePanel';
 
 export default function AdminDashboardPage() {
   const [file, setFile] = useState(null);
@@ -57,7 +58,7 @@ export default function AdminDashboardPage() {
       document.body.appendChild(a);
       a.click();
       a.remove();
-    } catch (err) {
+    } catch {
       setStatus({ type: 'danger', message: 'No se pudo generar la plantilla.' });
     }
   };
@@ -72,7 +73,6 @@ export default function AdminDashboardPage() {
       {status && <Alert variant={status.type} className="shadow-sm">{status.message}</Alert>}
 
       <Row className="g-4">
-        {/* Upload Card */}
         <Col md={8}>
           <Card className="bg-dark text-light border-0 shadow">
             <Card.Body className="p-5 text-center">
@@ -102,10 +102,9 @@ export default function AdminDashboardPage() {
           </Card>
         </Col>
 
-        {/* Info & Side actions */}
         <Col md={4}>
-          <Card className="bg-dark text-light border-0 shadow h-100">
-            <Card.Body className="p-4 d-flex flex-column">
+          <SurfacePanel className="h-100">
+            <Card.Body className="p-4 d-flex flex-column text-light">
               <h5 className="headline mb-4">Herramientas</h5>
               <div className="d-grid gap-3">
                 <Button variant="outline-light" className="text-start d-flex align-items-center" onClick={handleDownloadTemplate}>
@@ -124,7 +123,7 @@ export default function AdminDashboardPage() {
                 </small>
               </div>
             </Card.Body>
-          </Card>
+          </SurfacePanel>
         </Col>
       </Row>
     </>

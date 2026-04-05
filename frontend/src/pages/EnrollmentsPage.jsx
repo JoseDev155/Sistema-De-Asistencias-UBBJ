@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Modal, Button, Form, Spinner, Alert } from 'react-bootstrap';
+import { Button, Form, Spinner, Alert } from 'react-bootstrap';
 import { useAuth } from '@/context/AuthContext';
 import { apiFetch } from '@/api/apiClient';
+import PageHeader from '@/components/PageHeader';
+import LoadingState from '@/components/LoadingState';
+import SurfacePanel from '@/components/SurfacePanel';
+import CrudModal from '@/components/CrudModal';
 
 export default function EnrollmentsPage() {
   const { user, token } = useAuth();
@@ -79,30 +82,22 @@ export default function EnrollmentsPage() {
 
   return (
     <>
-      <div className="page-header">
-        <div>
-          <Link to="/dashboard" className="page-header-back">
-            <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>arrow_back</span>
-            Inicio
-          </Link>
-          <h1 className="headline mb-0" style={{ fontSize: '1.6rem', fontWeight: 700 }}>Inscripciones</h1>
-          <p style={{ color: 'var(--on-surface-dim)', fontSize: '0.85rem', marginBottom: 0 }}>
-            {isAdmin ? 'Administra las inscripciones de alumnos a grupos.' : 'Inscripciones de alumnos. Solo lectura.'}
-          </p>
-        </div>
-        {isAdmin && (
-          <Button id="btn-nueva-inscripcion" variant="danger"  onClick={openCreate}>
+      <PageHeader
+        title="Inscripciones"
+        description={isAdmin ? 'Administra las inscripciones de alumnos a grupos.' : 'Inscripciones de alumnos. Solo lectura.'}
+        action={isAdmin && (
+          <Button id="btn-nueva-inscripcion" variant="danger" onClick={openCreate}>
             <span className="material-symbols-outlined me-2" style={{ fontSize: '1rem' }}>add</span>
             Nueva Inscripción
           </Button>
         )}
-      </div>
+      />
 
-      {loading && <div className="text-center py-5"><Spinner animation="border" variant="danger" /></div>}
+      {loading && <LoadingState />}
       {error && <Alert variant="danger">{error}</Alert>}
 
       {!loading && !error && (
-        <div className="table-responsive" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10 }}>
+        <SurfacePanel className="table-responsive" footer={`${enrollments.length} inscripciones`}>
           <table className="table table-dark table-hover mb-0 crud-table">
             <thead>
               <tr>
@@ -138,43 +133,34 @@ export default function EnrollmentsPage() {
               )}
             </tbody>
           </table>
-          <div className="px-3 py-2" style={{ color: 'var(--on-surface-dim)', fontSize: '0.8rem' }}>
-            {enrollments.length} inscripciones
-          </div>
-        </div>
+        </SurfacePanel>
       )}
 
       {isAdmin && (
-        <Modal show={showModal} onHide={() => setShowModal(false)} centered data-bs-theme="dark">
-          <Modal.Header closeButton style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-            <Modal.Title className="headline" style={{ fontSize: '1.1rem' }}>
-              {editing ? 'Editar Inscripción' : 'Nueva Inscripción'}
-            </Modal.Title>
-          </Modal.Header>
-          <Form onSubmit={handleSave}>
-            <Modal.Body style={{ background: 'var(--surface)' }}>
-              {formError && <Alert variant="danger" className="py-2">{formError}</Alert>}
-              <Form.Group className="mb-3">
-                <Form.Label>ID del Estudiante</Form.Label>
-                <Form.Control id="input-insc-estudiante" type="text" placeholder="Ej: EST001" value={form.student_id} onChange={e => setForm(f => ({ ...f, student_id: e.target.value }))} required className="bg-dark text-light border-secondary" />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>ID del Grupo</Form.Label>
-                <Form.Control id="input-insc-grupo" type="text" placeholder="Ej: GRP001" value={form.group_id} onChange={e => setForm(f => ({ ...f, group_id: e.target.value }))} required className="bg-dark text-light border-secondary" />
-              </Form.Group>
-              <Form.Group className="mb-1">
-                <Form.Label>Fecha de Inscripción</Form.Label>
-                <Form.Control id="input-insc-fecha" type="date" value={form.enrollment_date} onChange={e => setForm(f => ({ ...f, enrollment_date: e.target.value }))} required className="bg-dark text-light border-secondary" />
-              </Form.Group>
-            </Modal.Body>
-            <Modal.Footer style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-              <Button variant="outline-secondary" onClick={() => setShowModal(false)}>Cancelar</Button>
-              <Button id="btn-guardar-insc" type="submit" variant="danger"  disabled={saving}>
-                {saving ? <Spinner size="sm" animation="border" /> : (editing ? 'Guardar Cambios' : 'Inscribir')}
-              </Button>
-            </Modal.Footer>
-          </Form>
-        </Modal>
+        <CrudModal
+          show={showModal}
+          onHide={() => setShowModal(false)}
+          title={editing ? 'Editar Inscripción' : 'Nueva Inscripción'}
+          onSubmit={handleSave}
+          error={formError}
+          saving={saving}
+          submitLabel={editing ? 'Guardar Cambios' : 'Inscribir'}
+          savingLabel="Guardando..."
+          submitId="btn-guardar-insc"
+        >
+          <Form.Group className="mb-3">
+            <Form.Label>ID del Estudiante</Form.Label>
+            <Form.Control id="input-insc-estudiante" type="text" placeholder="Ej: EST001" value={form.student_id} onChange={e => setForm(f => ({ ...f, student_id: e.target.value }))} required className="bg-dark text-light border-secondary" />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>ID del Grupo</Form.Label>
+            <Form.Control id="input-insc-grupo" type="text" placeholder="Ej: GRP001" value={form.group_id} onChange={e => setForm(f => ({ ...f, group_id: e.target.value }))} required className="bg-dark text-light border-secondary" />
+          </Form.Group>
+          <Form.Group className="mb-1">
+            <Form.Label>Fecha de Inscripción</Form.Label>
+            <Form.Control id="input-insc-fecha" type="date" value={form.enrollment_date} onChange={e => setForm(f => ({ ...f, enrollment_date: e.target.value }))} required className="bg-dark text-light border-secondary" />
+          </Form.Group>
+        </CrudModal>
       )}
     </>
   );
