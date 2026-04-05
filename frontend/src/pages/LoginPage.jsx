@@ -53,7 +53,7 @@ export default function LoginPage() {
               <img src={mexicoLogo} alt="UBBJ" className="login-mobile-logo" />
               <div>
                 <p className="login-mobile-kicker mb-0">Sistema institucional</p>
-                <h5 className="headline fw-bold mb-0">UBBJ</h5>
+                <h5 className="text-danger headline fw-bold mb-0">UBBJ</h5>
               </div>
             </div>
 
@@ -89,7 +89,8 @@ export default function LoginPage() {
               />
 
               <div className="d-grid mt-5">
-                <Button variant="danger" size="lg" type="submit" className="login-submit text-uppercase fw-bold border-0 p-3" disabled={loading}>
+                {/* Se elimino login-submit de className */}
+                <Button variant="danger" size="lg" type="submit" className="text-uppercase fw-bold border-0 p-3" disabled={loading}>
                   {loading ? 'Autenticando...' : 'Autenticar credenciales'}
                 </Button>
               </div>
