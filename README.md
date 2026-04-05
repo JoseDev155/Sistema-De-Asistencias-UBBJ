@@ -9,7 +9,7 @@
     <img src="https://img.shields.io/badge/País-México-44A833" />
     <img src="https://img.shields.io/badge/Idioma-Español-red" />
     <img src="https://img.shields.io/badge/Estado-Desarrollo-yellow" />
-    <img src="https://img.shields.io/badge/Última%20Actualización-2024--06--01-lightgrey" />
+    <img src="https://img.shields.io/badge/Última%20Actualización-2026--04--05-lightgrey" />
     <!-- Visitantes (cambiar por el de tu proprio repositorio) -->
     <a href="https://github.com/JoseDev155/" ><img alt="Visitor Badge" src="https://visitor-badge.laobi.icu/badge?page_id=JoseDev155.Sistema-De-Asistencias-UBBJ"></a>
 </p>

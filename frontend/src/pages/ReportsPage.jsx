@@ -103,6 +103,7 @@ export default function ReportsPage() {
                 {renderStat('Presentes', report.global_stats?.PRESENT ?? 0, 'check_circle', '#86efac')}
                 {renderStat('Ausentes', report.global_stats?.ABSENT ?? 0, 'cancel', '#fca5a5')}
                 {renderStat('Retardos', report.global_stats?.LATE ?? 0, 'schedule', '#fde68a')}
+                {renderStat('Salidas tempranas', report.global_stats?.LEFT_EARLY ?? 0, 'logout', '#cbd5e1')}
                 {renderStat('Justificados', report.global_stats?.JUSTIFIED ?? 0, 'verified', '#93c5fd')}
                 {renderStat('Puntualidad', `${report.global_stats?.PUNCTUALITY_PERCENTAGE ?? 0}%`, 'trending_up', 'var(--primary-light)')}
                 {renderStat('Ausentismo', `${report.global_stats?.ABSENT_PERCENTAGE ?? 0}%`, 'trending_down', '#fca5a5')}
@@ -121,6 +122,7 @@ export default function ReportsPage() {
                           <th>Presentes</th>
                           <th>Ausentes</th>
                           <th>Retardos</th>
+                          <th>Salidas tempranas</th>
                           <th>Total</th>
                         </tr>
                       </thead>
@@ -131,6 +133,7 @@ export default function ReportsPage() {
                             <td><span className="badge bg-success">{s.stats?.PRESENT ?? 0}</span></td>
                             <td><span className="badge bg-danger">{s.stats?.ABSENT ?? 0}</span></td>
                             <td><span className="badge bg-warning text-dark">{s.stats?.LATE ?? 0}</span></td>
+                            <td><span className="badge bg-secondary">{s.stats?.LEFT_EARLY ?? 0}</span></td>
                             <td style={{ color: 'var(--on-surface-dim)' }}>{s.stats?.TOTAL ?? 0}</td>
                           </tr>
                         ))}
