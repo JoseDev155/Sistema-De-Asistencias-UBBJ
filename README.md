@@ -48,7 +48,7 @@
 Registra entradas, calcula puntualidad y retardos, genera reportes y estadísticas para supervisión administrativa.
 
 >**Para la autora original del proyecto:**<br />
->Si el proyecto cumple con los requisitos de tu tarea, puedes usarlo para tu entrega sin ninguna preocupación. Pero, **yo ya NO haré modificaciones en el proyecto**, por lo que debes implementar las funcionalidades que necesites y/o te hagan falta, desdecambios en la estructura del código, la adición de nuevas funcionalidades, o la mejora de la documentación.
+>Si el proyecto cumple con los requisitos de tu tarea, puedes usarlo **LIBREMENTE** para tu entrega sin ninguna preocupación. Pero, **yo ya NO haré modificaciones en el proyecto**, por lo que debes implementar las funcionalidades que necesites y/o te hagan falta, desde incluir cambios en la estructura del código, la adición de nuevas funcionalidades, o la mejora de la documentación.
 >
 >Para reescribir el proyecto, puedes borrar la carpeta `.git` y luego crear un nuevo repositorio con `git init`. Al momento de hacer `push` a tu repositorio, usa ``git push -u origin main --force`` para sobrescribir el historial de commits y asegurarte de que el proyecto se vea como tu propio trabajo desde el principio.
 
