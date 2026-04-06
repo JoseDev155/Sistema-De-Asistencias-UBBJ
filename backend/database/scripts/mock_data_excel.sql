@@ -28,6 +28,7 @@ INSERT INTO career_signatures (id, signature_id, career_id) VALUES
 
 -- 6. CICLOS ACADÉMICOS
 INSERT INTO academic_cycles (cycle_name, cycle_year) VALUES 
+('Ciclo II - 2025', '2025-06-01'),
 ('Ciclo I - 2026', '2026-01-01');
 
 -- 7. ESTUDIANTES (Datos exactos extraídos del Excel)

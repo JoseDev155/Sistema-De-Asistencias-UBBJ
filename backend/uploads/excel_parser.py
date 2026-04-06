@@ -3,6 +3,8 @@ from datetime import date, time
 from io import BytesIO
 from sqlalchemy.orm import Session
 import openpyxl
+from openpyxl.worksheet.worksheet import Worksheet
+from typing import Any
 # Importar directorios del proyecto
 from repositories import (
     attendance_search_by_enrollment_and_date as search_by_enrollment_and_date,
@@ -10,16 +12,16 @@ from repositories import (
     attendance_update as update)
 
 # ─── Constantes del layout V2 (deben coincidir con excel_template_generator.py) ──
-_HEADER_ROW       = 4   # Fila con encabezados de día ("Lun 01", "Mar 02", ...)
-_DATA_ROW_START   = 5   # Primera fila de datos de alumnos
-_COL_NICKNAME     = 1   # Columna A: Apodo (no se usa para el import, solo referencia)
-_COL_FULLNAME     = 2   # Columna B: Nombre completo (no se usa para el import)
-_COL_DAYS_START   = 3   # Columna C: primer día del mes
-_COL_DAYS_END     = 33  # Columna AG: último día posible
-_COL_ENROLLMENT   = 35  # Columna AI: enrollment_id (identificador unívoco, oculto)
+_HEADER_ROW = 4   # Fila con encabezados de día ("Lun 01", "Mar 02", ...)
+_DATA_ROW_START = 5   # Primera fila de datos de alumnos
+_COL_NICKNAME = 1   # Columna A: Apodo (no se usa para el import, solo referencia)
+_COL_FULLNAME = 2   # Columna B: Nombre completo (no se usa para el import)
+_COL_DAYS_START = 3   # Columna C: primer día del mes
+_COL_DAYS_END = 33  # Columna AG: último día posible
+_COL_ENROLLMENT = 35  # Columna AI: enrollment_id (identificador unívoco, oculto)
 
 
-def parse_arrival_time(cell_value) -> time | None:
+def parse_arrival_time(cell_value: Any) -> time | None:
     """
     Convierte el valor de una celda del Excel a un objeto time.
     Acepta:
@@ -66,7 +68,7 @@ def parse_arrival_time(cell_value) -> time | None:
     return None  # Valor no reconocido → se trata como ausente
 
 
-def _extract_year_month_from_sheet(ws) -> tuple[int, int]:
+def _extract_year_month_from_sheet(ws: Worksheet) -> tuple[int, int]:
     """
     Extrae año y mes desde el nombre de la hoja.
     Formato esperado del título: "Asistencias YYYY-MM"
@@ -87,7 +89,7 @@ def _extract_year_month_from_sheet(ws) -> tuple[int, int]:
     )
 
 
-def _extract_day_columns(ws) -> dict[int, int]:
+def _extract_day_columns(ws: Worksheet) -> dict[int, int]:
     """
     Lee la fila de encabezados de días (HEADER_ROW = 4), columnas C–AG.
     Devuelve un dict {col_index: numero_de_dia} solo para columnas con encabezado válido.
@@ -105,7 +107,7 @@ def _extract_day_columns(ws) -> dict[int, int]:
     return day_columns
 
 
-def process_attendance_excel(file_content: bytes, db: Session) -> dict:
+def process_attendance_excel(file_content: bytes, db: Session) -> dict[str, int | str | list[str]]:
     """
     Parsea un archivo .xlsm (Template V2) y realiza UPSERT de asistencias.
 
@@ -120,7 +122,10 @@ def process_attendance_excel(file_content: bytes, db: Session) -> dict:
     """
     # keep_vba=True para que openpyxl no rechace el formato .xlsm
     wb = openpyxl.load_workbook(BytesIO(file_content), data_only=True, keep_vba=True)
-    ws = wb.active
+    ws_obj = wb.active
+    if not isinstance(ws_obj, Worksheet):
+        raise ValueError("La hoja activa no es una Worksheet válida.")
+    ws: Worksheet = ws_obj
 
     # ─── 1. Extraer año y mes desde el nombre de la hoja ─────────────────────
     year, month = _extract_year_month_from_sheet(ws)
@@ -151,9 +156,29 @@ def process_attendance_excel(file_content: bytes, db: Session) -> dict:
             total_omitidos += 1
             continue
 
-        try:
+        enrollment_id: int
+        if isinstance(enrollment_id_raw, bool):
+            total_omitidos += 1
+            continue
+
+        if isinstance(enrollment_id_raw, int):
+            enrollment_id = enrollment_id_raw
+        elif isinstance(enrollment_id_raw, float):
+            if not enrollment_id_raw.is_integer():
+                total_omitidos += 1
+                continue
             enrollment_id = int(enrollment_id_raw)
-        except (ValueError, TypeError):
+        elif isinstance(enrollment_id_raw, str):
+            raw_enrollment = enrollment_id_raw.strip()
+            if not raw_enrollment:
+                total_omitidos += 1
+                continue
+            try:
+                enrollment_id = int(raw_enrollment)
+            except ValueError:
+                total_omitidos += 1
+                continue
+        else:
             total_omitidos += 1
             continue
 
