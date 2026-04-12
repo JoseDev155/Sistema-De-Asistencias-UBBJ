@@ -10,8 +10,11 @@ Diagramas para completar el modelado:
 * Diagrama de carriles-flujo Swimlane
 * Diagrama de DFD completos (contexto-nivel 0, nivel 1 y nivel 2 completos no solo los principales), ojo estos no son los de flujos de progra 1 que se realizaban con los algoritmos.
 * Diagrama de componentes.
+* *Diccionario de datos*.
 
 >En este Markdown sólo incluiré una vista previa de los diagramas y el código para generarlo si es que la herramienta de modelado lo usa
+
+>El diccionario de datos lo incluiré directamente en un documento, para no saturar este archivo con tablas
 
 ## Diagrama de Arquitectura
 
