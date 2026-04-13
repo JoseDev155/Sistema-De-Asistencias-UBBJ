@@ -3,6 +3,10 @@
 >Este documento son mis notas, no es entregable, solo los diagramas ER y de clases son entregables
 >Sólo es para una breve explicación si es que les sirve :p
 
+>[!IMPORTANT]
+>El diagrama MER no se hizo, ya que el MER es un diagrama que muestra las tablas con sus atributos de forma mas gráfica, se hacía muy grande y muy engorroso hacerlo.
+>Es como los bosquejos inciales que anexe pero más detallado, por lo que no lo haré. Lo siento :(
+
 ## MR y MER
 El MR (**Modelo Relacinal**) es una representación gráfica de la estructura de una base de datos, mostrando las entidades, sus atributos y las relaciones entre ellas.
 
@@ -29,12 +33,6 @@ Pero al final si salió bien, Gemini únicamente me dio correción de tipos de d
 ### Modelo Relacional (MR)
 
 ![Modelo Relacional](./diagrama-mer-mr/Modelo%20Relacional%20MR%20-%20UBBJ.png)
-
-### Modelo Entidad-Relación (MER)
-
-![Modelo ER](./diagrama-mer-mr/Diagrama%20MER%20-%20UBBJ.png)
-
->Ambos diagramas se hicieron en **Lucidchart**
 
 ## Diagrama de Clases
 
