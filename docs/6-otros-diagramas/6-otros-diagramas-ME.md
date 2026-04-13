@@ -8,7 +8,7 @@ Diagramas para completar el modelado:
 * Diagrama de actividades.
 * Diagrama de secuencias.
 * Diagrama de carriles-flujo Swimlane
-* Diagrama de DFD completos (contexto-nivel 0, nivel 1 y nivel 2 completos no solo los principales), ojo estos no son los de flujos de progra 1 que se realizaban con los algoritmos.
+* Diagrama de DFD completos (contexto-nivel 0, nivel 1 y nivel 2 completos no solo los principales).
 * Diagrama de componentes.
 * *Diccionario de datos*.
 
@@ -71,6 +71,66 @@ flowchart BT
     style Frontend fill:#e1f5fe,stroke:#01579b
     style Backend fill:#f3e5f5,stroke:#4a148c
     style Data fill:#e8f5e9,stroke:#1b5e20
+```
+
+## Diagrama de Actividades
+
+Hecho en [Eraser](https://eraser.io/):
+
+![Diagrama de Actividades](./diagramas/Diagrama%20de%20Actividades%20-%20UBBJ.png)
+
+```eraser
+// Nodos de inicio y fin
+Start [shape: circle, fill: black, label: "Inicio"]
+End [shape: circle, fill: black, label: "Fin"]
+
+// Actividades iniciales
+Login [label: "Ingresar Credenciales"]
+Auth [label: "Validar en Backend (FastAPI)"]
+Decision_Auth [shape: diamond, label: "¿Datos válidos?"]
+Error_Login [label: "Mostrar Error de Acceso"]
+Dashboard [label: "Cargar Dashboard (React)"]
+Decision_Rol [shape: diamond, label: "¿Rol de Usuario?"]
+
+// Flujo Profesor
+Prof_Menu [label: "Seleccionar Materia y Grupo"]
+Decision_Metodo [shape: diamond, label: "¿Método de Registro?"]
+Manual [label: "Marcar Alumnos en Lista UI"]
+Upload_Excel [label: "Subir Archivo .xlsx"]
+Process_Asist [label: "Calcular Puntualidad y Guardar"]
+
+// Flujo Administrador
+Admin_Menu [label: "Acceder a Métricas y Reportes"]
+Filters [label: "Aplicar Filtros (Fecha/Carrera)"]
+Generate_Report [label: "Generar Reporte (PDF/Excel)"]
+
+// Conexiones de flujo
+Start > Login
+Login > Auth
+Auth > Decision_Auth
+
+// Lógica de decisión Login
+Decision_Auth > Error_Login: No
+Error_Login > Login
+Decision_Auth > Dashboard: Sí
+
+// Lógica de Rol
+Dashboard > Decision_Rol
+Decision_Rol > Prof_Menu: Profesor
+Decision_Rol > Admin_Menu: Administrador
+
+// Lógica de Registro (Profesor)
+Prof_Menu > Decision_Metodo
+Decision_Metodo > Manual: Manual
+Decision_Metodo > Upload_Excel: Excel
+Manual > Process_Asist
+Upload_Excel > Process_Asist
+Process_Asist > End
+
+// Lógica de Reportes (Admin)
+Admin_Menu > Filters
+Filters > Generate_Report
+Generate_Report > End
 ```
 
 ## Diagrama de Secuencia
@@ -310,3 +370,17 @@ P3_3 > P3_2: Datos Agregados (Cómputo)
 P3_2 > D3_Archivos: Crear PDF/Excel Temporal
 P3_2 > Administrador: Descarga de Reporte / Dashboard
 ```
+
+## Diagrama de Componentes
+
+Hecho con **Gemini**:
+
+![Diagrama de Componentes](./diagramas/Diagrama%20de%20Componentes%20Gemini%20-%20UBBJ.png)
+
+>Tomé como base un ejemplo de diagrama de componentes de mis clases en la uni, luego mapeé las carpetas `backend/` y `frontend/` con GitHub Copilot y luego lo refiné en **Claude**.
+
+Anexo las imagenes y archivos con los que generé el diagrama de componenetes en la carpeta `diagramas/` por cualquier cosa:
+
+* [Diagrama de Componentes - Claude - UBBJ](./diagramas/diagrama_componentes_sistema_asistencias_claude.svg)
+* [Diagrama de Componentes - GitHub Copilot en txt](./diagramas/diagrama-componentes.txt)
+* [Ejemplo de Diagrama de Componentes en la Uni](./diagramas/Ejemplo%20Diagrama%20de%20Componentes.png)

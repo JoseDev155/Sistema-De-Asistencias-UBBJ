@@ -1,0 +1,33 @@
+DIAGRAMA DE COMPONENTES (ALTO NIVEL)
+SCOPE: SOLO CARPETAS BACKEND Y FRONTEND
+
++--------------------------+      HTTP/JSON      +------------------------------+
+| FRONTEND (React + Vite)  | ------------------> | BACKEND (FastAPI)            |
+|                          |                     |                              |
+| - pages (vistas)         |                     | - routes/controllers         |
+| - layouts                |                     |   (academic, attendance,     |
+| - components (UI)        |                     |    auth, users, reports,     |
+| - context (auth)         |                     |    uploads, metrics, etc.)   |
+| - api (cliente API)      |                     | - services (logica negocio)  |
+|                          |                     | - repositories (CRUD)        |
++--------------------------+                     | - models (SQLAlchemy)        |
+                                                 | - schemas (Pydantic)          |
+                                                 | - utils (CORS, rate limit,    |
+                                                 |   logging, auth helpers)      |
+                                                 | - database/ (conexion)        |
+                                                 | - reports/ exports/ metrics   |
+                                                 | - uploads/ logs               |
+                                                 +------------------------------+
+                                                               |
+                                                               | SQL
+                                                               v
+                                                       [PostgreSQL DB]
+                                                               |
+                                                               | archivos
+                                                               v
+                                               [uploads/, exports/, logs/]
+
+NOTAS:
+- Frontend consume la API del backend mediante rutas protegidas y publicas.
+- Backend organiza la logica en capas: controllers -> services -> repositories.
+- Modelos y schemas definen la estructura de datos y validacion.
