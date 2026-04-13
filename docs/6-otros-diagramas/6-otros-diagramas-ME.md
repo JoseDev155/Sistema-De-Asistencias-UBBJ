@@ -10,7 +10,7 @@ Diagramas para completar el modelado:
 * Diagrama de carriles-flujo Swimlane
 * Diagrama de DFD completos (contexto-nivel 0, nivel 1 y nivel 2 completos no solo los principales).
 * Diagrama de componentes.
-* *Diccionario de datos*.
+* [*Diccionario de datos*](./diccionario-de-datos/diccionario-de-datos.md).
 
 >En este Markdown sólo incluiré una vista previa de los diagramas y el código para generarlo si es que la herramienta de modelado lo usa
 
