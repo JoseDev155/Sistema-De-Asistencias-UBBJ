@@ -2,6 +2,13 @@
 
 >Usaré el primer diagrama, ya que es el que yo ya he entregado en proyectos anteriores, pero pueden usar cualquiera
 
+## Documento
+
+En el documento `Casos de uso - UBBJ.docx` se encuentran descritos los casos de uso del sistema, con sus respectivos actores. El formato es de una plantilla de un proyecto anterior,
+mientras que la redacción se hizo con **Claude**.
+
+Este se unirá posteriormente al **Manual del Analista**.
+
 ## Diagrama de Casos de Uso v1
 
 Hecho en [Lucidchart](https://www.lucidchart.com/pages):
