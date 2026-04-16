@@ -62,6 +62,7 @@ from .enrollment_service import (
 # Group Service
 from .group_service import (
     get_all_service as get_all_groups,
+    get_all_with_users_service as get_all_groups_with_users,
     search_by_id_service as search_group_by_id,
     search_by_name_service as search_groups_by_name,
     create_group_service,
@@ -136,6 +137,7 @@ __all__ = [
     # Attendance
     "get_all_attendances",
     "get_calculated_attendances_by_group",
+    "get_calculated_attendances_by_group_with_nickname_service",
     "search_attendance_by_id",
     "create_attendance_service",
     "update_attendance_service",
@@ -170,6 +172,7 @@ __all__ = [
     "destroy_enrollment_service",
     # Group
     "get_all_groups",
+    "get_all_groups_with_users",
     "search_group_by_id",
     "search_groups_by_name",
     "create_group_service",

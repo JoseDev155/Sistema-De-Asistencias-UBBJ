@@ -64,7 +64,14 @@ from .enrollment_schema import (
 )
 
 # Schemas para Group
-from .group_schema import GroupBase, GroupCreate, GroupUpdate, GroupResponse
+from .group_schema import (
+    GroupBase,
+    GroupCreate,
+    GroupUpdate,
+    GroupResponse,
+    GroupWithUserResponse,
+    GroupWithUserDict,
+)
 
 # Schemas para Schedule
 from .schedule_schema import ScheduleBase, ScheduleCreate, ScheduleUpdate, ScheduleResponse
@@ -130,6 +137,8 @@ __all__ = [
     "GroupCreate",
     "GroupUpdate",
     "GroupResponse",
+    "GroupWithUserResponse",
+    "GroupWithUserDict",
     # Schedule
     "ScheduleBase",
     "ScheduleCreate",

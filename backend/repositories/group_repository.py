@@ -1,11 +1,24 @@
 # Librerias
 from sqlalchemy.orm import Session
 # Importar directorios del proyecto
-from models import Group
+from models import Group, User
 
 # Metodos
 def get_all(db: Session):
     return db.query(Group).all()
+
+# join con usuarios
+def get_all_with_users(db: Session):
+    return (
+        db.query(
+            Group,
+            User.first_name.label("user_first_name"),
+            User.last_name.label("user_last_name"),
+        )
+        .outerjoin(User, Group.user_id == User.id)
+        .order_by(Group.id.asc())
+        .all()
+    )
 
 def search_by_id(db: Session, id: str):
     return db.query(Group).filter(Group.id == id).first()

@@ -6,11 +6,12 @@ from services import (
     create_group_service,
     destroy_group_service,
     get_all_groups as get_all_service,
+    get_all_groups_with_users as get_all_with_users_service,
     search_group_by_id as search_by_id_service,
     search_groups_by_name as search_by_name_service,
     update_group_service
 )
-from schemas import GroupCreate, GroupResponse, GroupUpdate
+from schemas import GroupCreate, GroupResponse, GroupUpdate, GroupWithUserResponse
 from database import get_db
 from models import User
 from utils import get_current_admin_user, get_current_professor_or_admin_user
@@ -30,7 +31,18 @@ async def get_groups(
     current_user: User = Depends(get_current_professor_or_admin_user)
 ) -> list[GroupResponse]:
     groups_list = get_all_service(db)
-    return groups_list
+    return groups_list # type: ignore
+
+@group_controller.get("/groups/with-users", tags=["groups"],
+                     description="Endpoint para obtener todos los grupos del sistema con sus usuarios. Admin y Profesor.",
+                     response_model=list[GroupWithUserResponse],
+                     status_code=status.HTTP_200_OK)
+async def get_groups_with_users(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_professor_or_admin_user)
+) -> list[GroupWithUserResponse]:
+    groups_list= get_all_with_users_service(db)
+    return groups_list # type: ignore
 
 @group_controller.get("/groups/{id}", tags=["groups"],
                      description="Endpoint para obtener un grupo específico por su ID. Admin y Profesor.",

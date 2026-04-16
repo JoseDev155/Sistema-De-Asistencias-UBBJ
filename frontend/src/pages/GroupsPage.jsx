@@ -11,12 +11,12 @@ export default function GroupsPage() {
   const { user, token } = useAuth();
   const isAdmin = user?.isAdmin ?? false;
 
-  const [groups, setGroups]       = useState([]);
-  const [loading, setLoading]     = useState(true);
-  const [error, setError]         = useState(null);
+  const [groups, setGroups] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [editing, setEditing]     = useState(null); // null = crear | objeto = editar
-  const [saving, setSaving]       = useState(false);
+  const [editing, setEditing] = useState(null); // null = crear | objeto = editar
+  const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState(null);
 
   const emptyForm = { id: '', name: '', description: '', user_id: '' };
@@ -27,7 +27,7 @@ export default function GroupsPage() {
     setLoading(true);
     setError(null);
     try {
-      const data = await apiFetch('/groups', { token });
+      const data = await apiFetch('/groups/with-users', { token });
       setGroups(data);
     } catch (e) {
       setError(e.message);
@@ -46,11 +46,29 @@ export default function GroupsPage() {
     setShowModal(true);
   };
 
-  const openEdit = (g) => {
+  const openEdit = async (g) => {
     setEditing(g);
-    setForm({ id: g.id, name: g.name, description: g.description ?? '', user_id: g.user_id ?? '' });
     setFormError(null);
+    try {
+      const fullGroup = await apiFetch(`/groups/${g.id}`, { token });
+      setForm({
+        id: fullGroup.id,
+        name: fullGroup.name,
+        description: fullGroup.description ?? '',
+        user_id: fullGroup.user_id ?? '',
+      });
+    } catch (e) {
+      setForm({ id: g.id, name: g.name, description: g.description ?? '', user_id: '' });
+      setFormError(`No se pudo cargar el grupo: ${e.message}`);
+    }
     setShowModal(true);
+  };
+
+  const formatTeacherName = (group) => {
+    const first = group?.user_first_name?.trim() ?? '';
+    const last = group?.user_last_name?.trim() ?? '';
+    const fullName = `${first} ${last}`.trim();
+    return fullName || '—';
   };
 
   const handleDelete = async (id) => {
@@ -115,7 +133,7 @@ export default function GroupsPage() {
                 <th>ID</th>
                 <th>Nombre del Grupo</th>
                 <th>Descripción</th>
-                <th>Profesor (ID)</th>
+                <th>Profesor</th>
                 {isAdmin && <th className="text-end">Acciones</th>}
               </tr>
             </thead>
@@ -128,7 +146,10 @@ export default function GroupsPage() {
                     <td><code style={{ color: 'var(--primary-light)' }}>{g.id}</code></td>
                     <td style={{ fontWeight: 600 }}>{g.name}</td>
                     <td style={{ color: 'var(--on-surface-dim)', fontSize: '0.85rem' }}>{g.description ?? '—'}</td>
-                    <td style={{ fontSize: '0.85rem' }}>{g.user_id ?? '—'}</td>
+                    <td style={{ fontSize: '0.85rem' }}>
+                      {formatTeacherName(g)}
+                    </td>
+                    
                     {isAdmin && (
                       <td className="text-end">
                         <button id={`btn-editar-${g.id}`} className="btn btn-sm btn-outline-secondary me-2" onClick={() => openEdit(g)}>
@@ -139,6 +160,7 @@ export default function GroupsPage() {
                         </button>
                       </td>
                     )}
+                    
                   </tr>
                 ))
               )}

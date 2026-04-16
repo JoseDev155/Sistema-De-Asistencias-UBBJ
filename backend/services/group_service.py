@@ -7,17 +7,35 @@ from utils.logger import logger
 from repositories import (
     group_create as create, \
     group_get_all as get_all, \
+    group_get_all_with_users as get_all_with_users, \
     group_search_by_id as search_by_id, \
     group_search_by_name as search_by_name, \
     group_update as update, \
     group_destroy as destroy)
 from database import get_db
 from models import Group
-from schemas import GroupCreate, GroupUpdate
+from schemas import GroupCreate, GroupUpdate, GroupWithUserDict
 
 
 def get_all_service(db: Session = Depends(get_db)) -> List[Group]:
     return get_all(db)
+
+def get_all_with_users_service(db: Session = Depends(get_db)) -> List[GroupWithUserDict]:
+    query = get_all_with_users(db)
+    results: List[GroupWithUserDict] = []
+
+    for record, user_first_name, user_last_name in query:
+        group_dict: GroupWithUserDict = {
+            "id": record.id,
+            "name": record.name,
+            "career_signature_id": record.career_signature_id,
+            "academic_cycle_id": record.academic_cycle_id,
+            "user_first_name": user_first_name,
+            "user_last_name": user_last_name,
+        }
+        results.append(group_dict)
+
+    return results
 
 def search_by_id_service(db: Session = Depends(get_db), id: str | None = None) -> Group | None:
     if not id:

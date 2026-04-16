@@ -40,8 +40,10 @@ load_dotenv()
 
 # CONFIGURAR CORS
 # Leer URLs de CORS desde .env (ej: "http://localhost:3000,http://localhost:8080")
-cors_origins_str = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:8080")
-cors_origins = [url.strip() for url in cors_origins_str.split(",")]
+_CORS_ORIGINS_STR = os.getenv("CORS_ORIGINS")
+cors_origins = [
+    url.strip() for url in _CORS_ORIGINS_STR.split(",")
+    ] if _CORS_ORIGINS_STR else []
 
 app.add_middleware(
     CORSMiddleware,

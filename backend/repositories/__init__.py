@@ -54,6 +54,7 @@ from .enrollment_repository import (
 # Group Repository
 from .group_repository import (
     get_all as group_get_all,
+    get_all_with_users as group_get_all_with_users,
     search_by_id as group_search_by_id,
     search_by_name as group_search_by_name,
     create as group_create,
@@ -158,6 +159,7 @@ __all__ = [
     "enrollment_destroy",
     # Group
     "group_get_all",
+    "group_get_all_with_users",
     "group_search_by_id",
     "group_search_by_name",
     "group_create",
