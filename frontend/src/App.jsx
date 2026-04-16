@@ -17,6 +17,8 @@ import UsersPage from '@/pages/UsersPage';
 import EnrollmentsPage from '@/pages/EnrollmentsPage';
 import SchedulesPage from '@/pages/SchedulesPage';
 import ReportsPage from '@/pages/ReportsPage';
+import CareersPage from '@/pages/CareersPage';
+import SignaturesPage from '@/pages/SignaturesPage';
 
 // Guarda de ruta: redirige al login si no hay token válido.
 // Mientras el contexto resuelve los datos del usuario muestra un spinner.
@@ -59,6 +61,8 @@ function App() {
           <Route path="subir-asistencias" element={<UploadAttendancePage />} />
           <Route path="estudiantes" element={<StudentsPage />} />
           <Route path="grupos" element={<GroupsPage />} />
+          <Route path="carreras" element={<CareersPage />} />
+          <Route path="materias" element={<SignaturesPage />} />
           <Route path="ciclos" element={<AcademicCyclesPage />} />
           <Route path="inscripciones" element={<EnrollmentsPage />} />
           <Route path="horarios" element={<SchedulesPage />} />

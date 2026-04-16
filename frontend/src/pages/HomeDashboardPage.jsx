@@ -22,6 +22,18 @@ const ADMIN_MODULES = [
     desc: 'Crea y administra los grupos asignados a cada profesor.',
   },
   {
+    path: '/dashboard/carreras',
+    icon: 'workspace_premium',
+    title: 'Carreras',
+    desc: 'Administra las carreras activas e historicas del sistema.',
+  },
+  {
+    path: '/dashboard/materias',
+    icon: 'menu_book',
+    title: 'Materias',
+    desc: 'Gestiona las materias disponibles para los grupos y carreras.',
+  },
+  {
     path: '/dashboard/ciclos',
     icon: 'event_repeat',
     title: 'Ciclos Académicos',
@@ -71,6 +83,18 @@ const PROFESOR_MODULES = [
     icon: 'groups',
     title: 'Mis Grupos',
     desc: 'Visualiza los grupos que tienes asignados.',
+  },
+  {
+    path: '/dashboard/carreras',
+    icon: 'workspace_premium',
+    title: 'Carreras',
+    desc: 'Consulta las carreras disponibles en el sistema.',
+  },
+  {
+    path: '/dashboard/materias',
+    icon: 'menu_book',
+    title: 'Materias',
+    desc: 'Consulta las materias activas de la institucion.',
   },
   {
     path: '/dashboard/estudiantes',

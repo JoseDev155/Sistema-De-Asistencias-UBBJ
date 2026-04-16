@@ -22,6 +22,20 @@ const ALL_MODULES = [
     section: 'Académico',
   },
   {
+    path: '/dashboard/carreras',
+    label: 'Carreras',
+    icon: 'workspace_premium',
+    roles: [1, 2],
+    section: 'Académico',
+  },
+  {
+    path: '/dashboard/materias',
+    label: 'Materias',
+    icon: 'menu_book',
+    roles: [1, 2],
+    section: 'Académico',
+  },
+  {
     path: '/dashboard/estudiantes',
     label: 'Estudiantes',
     icon: 'school',
